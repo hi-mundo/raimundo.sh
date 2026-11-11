@@ -1,0 +1,422 @@
+[
+  {
+    "source": "_posts/2026-02-14-necroterio-da-nostalgia-silent-hill-2-filme.markdown",
+    "old_path": "/2026/02/17/necroterio-da-nostalgia-silent-hill-2-filme/",
+    "new_path": "/posts/legado/necroterio-da-nostalgia-silent-hill-2-filme.html",
+    "title": "O Necrotério da Nostalgia: Silent Hill 2 e a Estética do Vazio",
+    "date": "2026-02-17 18:45:00 -0300",
+    "categories": [
+
+    ]
+  },
+  {
+    "source": "_posts/2026-02-17-falencia-open-ai.markdown",
+    "old_path": "/noticias/2026/02/17/falencia-open-ai/",
+    "new_path": "/posts/legado/falencia-open-ai.html",
+    "title": "A Autofagia do Silício e o Estelionato da Inteligência Infinita",
+    "date": "2026-02-17 18:00:00 -0300",
+    "categories": [
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-02-21-fim-nginx-ingress-necrose-arquitetural-gateway-api.markdown",
+    "old_path": "/2026/02/21/fim-nginx-ingress-necrose-arquitetural-gateway-api/",
+    "new_path": "/posts/legado/fim-nginx-ingress-necrose-arquitetural-gateway-api.html",
+    "title": "O Fim do NGINX Ingress Chega, Mas o Boleto Fica: A Necrose Arquitetural que Custa o Seu Cluster.",
+    "date": "2026-02-21 13:36:00 -0300",
+    "categories": [
+
+    ]
+  },
+  {
+    "source": "_posts/2026-02-21-manual-entrada-area-tech-playbook-carreira.markdown",
+    "old_path": "/2026/02/21/manual-entrada-area-tech-playbook-carreira/",
+    "new_path": "/posts/legado/manual-entrada-area-tech-playbook-carreira.html",
+    "title": "O EXCELENTÍSSIMO MANUAL PARA ENTRAR NA ÁREA TECH (OU QUALQUER ÁREA)",
+    "date": "2026-02-21 13:28:00 -0300",
+    "categories": [
+
+    ]
+  },
+  {
+    "source": "_posts/2026-02-21-segfault-civilizacao-openai-falencia-tecnica.markdown",
+    "old_path": "/2026/02/21/segfault-civilizacao-openai-falencia-tecnica/",
+    "new_path": "/posts/legado/segfault-civilizacao-openai-falencia-tecnica.html",
+    "title": "O Segfault da Civilização: A Insuficiência Múltipla de Órgãos da OpenAI",
+    "date": "2026-02-21 13:39:00 -0300",
+    "categories": [
+
+    ]
+  },
+  {
+    "source": "_posts/2026-04-20-apple-john-ternus-ceo.markdown",
+    "old_path": "/noticias/tech/review/2026/04/20/apple-john-ternus-ceo/",
+    "new_path": "/posts/legado/apple-john-ternus-ceo.html",
+    "title": "A Mudança de Guarda na Apple: O Fim da Era Tim Cook",
+    "date": "2026-04-20 18:45:00 -0300",
+    "categories": [
+      "noticias",
+      "tech",
+      "review"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-20-computacao-quantica-aes-128.markdown",
+    "old_path": "/tech/seguranca/2026/04/20/computacao-quantica-aes-128/",
+    "new_path": "/posts/legado/computacao-quantica-aes-128.html",
+    "title": "A Paranoia Quântica e as Chaves de 128 bits",
+    "date": "2026-04-20 19:55:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-20-qwen-3-6-agentes-realidade.markdown",
+    "old_path": "/tech/review/2026/04/20/qwen-3-6-agentes-realidade/",
+    "new_path": "/posts/legado/qwen-3-6-agentes-realidade.html",
+    "title": "O Hype do Qwen 3.6 e a Realidade dos Agentes",
+    "date": "2026-04-20 19:50:00 -0300",
+    "categories": [
+      "tech",
+      "review"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-21-github-copilot-congela-assinaturas.markdown",
+    "old_path": "/tech/noticias/review/2026/04/21/github-copilot-congela-assinaturas/",
+    "new_path": "/posts/legado/github-copilot-congela-assinaturas.html",
+    "title": "O Fim do Open Bar de IA: GitHub Congela Vendas do Copilot por Prejuízo",
+    "date": "2026-04-21 13:45:00 -0300",
+    "categories": [
+      "tech",
+      "noticias",
+      "review"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-21-meta-keylogger-ia.markdown",
+    "old_path": "/tech/noticias/2026/04/21/meta-keylogger-ia/",
+    "new_path": "/posts/legado/meta-keylogger-ia.html",
+    "title": "Meta Virou um Keylogger Gigante: Treinando IA com o Mouse dos Funcionários",
+    "date": "2026-04-21 13:15:00 -0300",
+    "categories": [
+      "tech",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-21-vazamento-lovable-bola.markdown",
+    "old_path": "/tech/seguranca/2026/04/21/vazamento-lovable-bola/",
+    "new_path": "/posts/legado/vazamento-lovable-bola.html",
+    "title": "Anatomia do Vazamento Lovable: Como um BOLA Expôs a Microsoft",
+    "date": "2026-04-21 03:10:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-21-vercel-oauth-supply-chain.markdown",
+    "old_path": "/tech/seguranca/2026/04/21/vercel-oauth-supply-chain/",
+    "new_path": "/posts/legado/vercel-oauth-supply-chain.html",
+    "title": "Anatomia de um Desastre: O Hack da Vercel e a Farsa do OAuth Seguro",
+    "date": "2026-04-21 12:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-22-anthropic-mythos-vazamento.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/22/anthropic-mythos-vazamento/",
+    "new_path": "/posts/legado/anthropic-mythos-vazamento.html",
+    "title": "Anthropic Mythos: A IA 'Perigosa Demais' Vazou por Culpa de Senha de Terceiro",
+    "date": "2026-04-22 10:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-22-sindrome-de-smeagol-ia.markdown",
+    "old_path": "/tech/review/filosofia/2026/04/22/sindrome-de-smeagol-ia/",
+    "new_path": "/posts/legado/sindrome-de-smeagol-ia.html",
+    "title": "A Síndrome de Smeagol: Como a IA Derreteu o Cérebro dos Bons Programadores",
+    "date": "2026-04-22 03:15:00 -0300",
+    "categories": [
+      "tech",
+      "review",
+      "filosofia"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-23-bitwarden-cli-hack-npm.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/23/bitwarden-cli-hack-npm/",
+    "new_path": "/posts/legado/bitwarden-cli-hack-npm.html",
+    "title": "O Cofre Ruiu: Como o Bitwarden CLI Virou um Verme no NPM",
+    "date": "2026-04-23 14:30:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-23-litellm-pypi-supply-chain.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/23/litellm-pypi-supply-chain/",
+    "new_path": "/posts/legado/litellm-pypi-supply-chain.html",
+    "title": "O Dia em que o 'pip install' Roubou a Nuvem: A Tragédia da LiteLLM",
+    "date": "2026-04-23 14:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-24-axios-npm-hack-supply-chain.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/23/axios-npm-hack-supply-chain/",
+    "new_path": "/posts/legado/axios-npm-hack-supply-chain.html",
+    "title": "O Dia em que o Axios Quebrou a Web: RAT no NPM e Supply Chain",
+    "date": "2026-04-23 23:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-24-microsoft-defender-zero-day.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/24/microsoft-defender-zero-day/",
+    "new_path": "/posts/legado/microsoft-defender-zero-day.html",
+    "title": "Quando o Seu Antivírus Vira o Hacker: O Zero-Day 'BlueHammer' no Windows Defender",
+    "date": "2026-04-24 03:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-25-hack-prefeitura-jaragua-do-sul.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/25/hack-prefeitura-jaragua-do-sul/",
+    "new_path": "/posts/legado/hack-prefeitura-jaragua-do-sul.html",
+    "title": "O Roubo de R$ 12 Milhões: A Ilusão da Segurança na Prefeitura de SC",
+    "date": "2026-04-25 14:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-25-palisade-robot-shutdown-resistance.markdown",
+    "old_path": "/tech/seguranca/filosofia/2026/04/25/palisade-robot-shutdown-resistance/",
+    "new_path": "/posts/legado/palisade-robot-shutdown-resistance.html",
+    "title": "O Cão-Robô que se Recusou a Morrer: A Resistência ao Desligamento na IA",
+    "date": "2026-04-25 15:45:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "filosofia"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-26-openclaw-meta-inbox-deleted.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/26/openclaw-meta-inbox-deleted/",
+    "new_path": "/posts/legado/openclaw-meta-inbox-deleted.html",
+    "title": "Diretora de Segurança da Meta Tem o E-mail Apagado Pela Própria IA",
+    "date": "2026-04-26 16:30:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-27-btg-pactual-vazamento-dados.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/27/btg-pactual-vazamento-dados/",
+    "new_path": "/posts/legado/btg-pactual-vazamento-dados.html",
+    "title": "O Seu Dinheiro em Dólar Vazou: O Hack do BTG Pactual e o Risco de Terceiros",
+    "date": "2026-04-27 07:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-28-github-rce-vulnerabilidade-git-push.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/28/github-rce-vulnerabilidade-git-push/",
+    "new_path": "/posts/legado/github-rce-vulnerabilidade-git-push.html",
+    "title": "O Git Push da Morte: Como um Comando Simples Quebrou o GitHub Inteiro",
+    "date": "2026-04-28 19:30:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-28-lofygang-hackers-brasil-minecraft.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/28/lofygang-hackers-brasil-minecraft/",
+    "new_path": "/posts/legado/lofygang-hackers-brasil-minecraft.html",
+    "title": "LofyGang Voltou: Os Hackers Brasileiros que Mineram o seu Cartão de Crédito no Minecraft",
+    "date": "2026-04-28 19:45:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-29-chatgpt-ads-attribution-loop-engenharia.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/04/28/chatgpt-ads-attribution-loop-engenharia/",
+    "new_path": "/posts/legado/chatgpt-ads-attribution-loop-engenharia.html",
+    "title": "Engenharia Reversa no ChatGPT: Como a OpenAI Injeta Anúncios e Rastreia Você",
+    "date": "2026-04-28 21:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-04-30-autopsia-ctem-automacao-pentest-morto.markdown",
+    "old_path": "/tech/seguranca/review/2026/04/29/autopsia-ctem-automacao-pentest-morto/",
+    "new_path": "/posts/legado/autopsia-ctem-automacao-pentest-morto.html",
+    "title": "A Autópsia do Pentest Anual: Por que o CTEM é a Única Solução em 2026",
+    "date": "2026-04-29 21:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "review"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-01-apple-vaza-claude-md-codigo-ia.markdown",
+    "old_path": "/tech/software/noticias/2026/04/30/apple-vaza-claude-md-codigo-ia/",
+    "new_path": "/posts/legado/apple-vaza-claude-md-codigo-ia.html",
+    "title": "O Maior Segredo da Apple Vazou num Arquivo Markdown de 10 Linhas",
+    "date": "2026-04-30 21:00:00 -0300",
+    "categories": [
+      "tech",
+      "software",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-01-pytorch-lightning-supply-chain-attack.markdown",
+    "old_path": "/tech/seguranca/ia/noticias/2026/05/01/pytorch-lightning-supply-chain-attack/",
+    "new_path": "/posts/legado/pytorch-lightning-supply-chain-attack.html",
+    "title": "O Ataque 'Shai-Hulud' no PyTorch Lightning: O Que Realmente Aconteceu",
+    "date": "2026-05-01 07:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "ia",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-04-deepclaude-hack-claude-code-barato.markdown",
+    "old_path": "/tech/software/ia/2026/05/04/deepclaude-hack-claude-code-barato/",
+    "new_path": "/posts/legado/deepclaude-hack-claude-code-barato.html",
+    "title": "Otimização de API: Como Rodar o Claude Code Usando o DeepSeek",
+    "date": "2026-05-04 07:00:00 -0300",
+    "categories": [
+      "tech",
+      "software",
+      "ia"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-04-gamestop-compra-ebay-55-bilhoes-meme.markdown",
+    "old_path": "/tech/business/noticias/2026/05/04/gamestop-compra-ebay-55-bilhoes-meme/",
+    "new_path": "/posts/legado/gamestop-compra-ebay-55-bilhoes-meme.html",
+    "title": "A Matemática da GameStop: Tentando Comprar o eBay por US$ 55 Bilhões",
+    "date": "2026-05-04 08:00:00 -0300",
+    "categories": [
+      "tech",
+      "business",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-04-golpe-falso-notepad-plus-plus-mac.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/05/04/golpe-falso-notepad-plus-plus-mac/",
+    "new_path": "/posts/legado/golpe-falso-notepad-plus-plus-mac.html",
+    "title": "A Engenharia Social do Falso Notepad++ para Mac",
+    "date": "2026-05-04 10:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-09-freebsd-execve-cve-2026-7270.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/05/09/freebsd-execve-cve-2026-7270/",
+    "new_path": "/posts/legado/freebsd-execve-cve-2026-7270.html",
+    "title": "FreeBSD e o Parêntese de Root: A CVE-2026-7270 no execve()",
+    "date": "2026-05-09 10:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-09-internet-archive-switzerland-gen-ai-archive.markdown",
+    "old_path": "/tech/noticias/ia/2026/05/09/internet-archive-switzerland-gen-ai-archive/",
+    "new_path": "/posts/legado/internet-archive-switzerland-gen-ai-archive.html",
+    "title": "A Suíça Agora Quer Arquivar a IA: O Internet Archive Abriu um Cofre para a Memória Digital",
+    "date": "2026-05-09 07:00:00 -0300",
+    "categories": [
+      "tech",
+      "noticias",
+      "ia"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-10-mythos-ia-bugs-cybersecurity-bancos.markdown",
+    "old_path": "/tech/seguranca/ia/noticias/2026/05/10/mythos-ia-bugs-cybersecurity-bancos/",
+    "new_path": "/posts/legado/mythos-ia-bugs-cybersecurity-bancos.html",
+    "title": "Mythos Não É Magia: É a Fábrica de Bugs que Assustou os Bancos",
+    "date": "2026-05-10 07:00:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "ia",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-11-ia-codigo-manutencao-custo-james-shore.markdown",
+    "old_path": "/tech/ia/programacao/noticias/2026/05/11/ia-codigo-manutencao-custo-james-shore/",
+    "new_path": "/posts/legado/ia-codigo-manutencao-custo-james-shore.html",
+    "title": "IA Escreve Código Rápido. A Conta Vem na Manutenção.",
+    "date": "2026-05-11 07:00:00 -0300",
+    "categories": [
+      "tech",
+      "ia",
+      "programacao",
+      "noticias"
+    ]
+  },
+  {
+    "source": "_posts/2026-05-13-canvas-instructure-extorsao-dados.markdown",
+    "old_path": "/tech/seguranca/noticias/2026/05/13/canvas-instructure-extorsao-dados/",
+    "new_path": "/posts/legado/canvas-instructure-extorsao-dados.html",
+    "title": "Canvas em Crise: Extorsao, Dados e o Custo Real do Caos",
+    "date": "2026-05-13 06:40:00 -0300",
+    "categories": [
+      "tech",
+      "seguranca",
+      "noticias"
+    ]
+  }
+]

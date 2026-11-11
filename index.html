@@ -4,36 +4,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>raimundopessoa.com - o burro curioso</title>
+  <title>raimundo.sh - o burro curioso</title>
   <meta name="description" content="Textos, ideias e notas tecnicas de Raimundo Pessoa." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      color-scheme: light dark;
-      --bg: #f6f1e8;
-      --text: #1f1a14;
-      --muted: #6f6558;
-      --faint: #9a8f82;
-      --line: rgba(54, 43, 29, 0.16);
-      --line-strong: rgba(54, 43, 29, 0.28);
-      --link: #684513;
-      --float: rgba(255, 250, 241, 0.88);
-      --shadow: 0 12px 26px rgba(67, 49, 25, 0.12);
-      --ease: cubic-bezier(.2, .8, .2, 1);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #14110e;
-        --text: #efe7db;
-        --muted: #b8ab99;
-        --faint: #8c806f;
-        --line: rgba(239, 221, 195, 0.14);
-        --line-strong: rgba(239, 221, 195, 0.28);
-        --link: #e3c07a;
-        --float: rgba(30, 26, 22, 0.9);
-        --shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
-      }
+      color-scheme: dark;
+      --bg: #000;
+      --surface: #0c0c0d;
+      --text: #ece6dc;
+      --muted: #a39d93;
+      --faint: #8a857d;
+      --line: rgba(236, 230, 220, 0.13);
+      --link: #e3c07a;
+      --accent: #e3c07a;
+      --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
     }
 
     * {
@@ -41,561 +30,1028 @@
     }
 
     html {
-      scroll-behavior: smooth;
+      scroll-padding-top: 76px;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html {
+        scroll-behavior: smooth;
+      }
     }
 
     body {
       margin: 0;
-      min-height: 100vh;
+      padding-bottom: 34px;
       background: var(--bg);
       color: var(--text);
-      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-      font-size: 18px;
-      line-height: 1.72;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: #000;
+    }
+
+    :focus-visible {
+      outline: 1px solid var(--accent);
+      outline-offset: 2px;
     }
 
     a {
       color: var(--link);
-      text-decoration-thickness: 1px;
-      text-underline-offset: 0.18em;
     }
 
     button {
       font: inherit;
     }
 
-    .layout {
+    h1,
+    h2,
+    h3,
+    p,
+    figure {
+      margin: 0;
+    }
+
+    h3 {
+      font-size: 1em;
+      font-weight: 600;
+    }
+
+    /* O resumo sai da tela e aparece na status bar, sem sumir para leitor de tela. */
+    .hint {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px 24px;
+      padding: 14px max(24px, calc((100% - 1280px) / 2));
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .prompt {
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .prompt b {
+      color: var(--link);
+      font-weight: 600;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      color: var(--faint);
+      font-size: 0.86em;
+    }
+
+    .lang {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .lang:hover {
+      color: var(--link);
+    }
+
+    .app {
       display: grid;
-      grid-template-columns: clamp(170px, 18vw, 240px) minmax(0, 1fr);
-      column-gap: clamp(28px, 3.4vw, 52px);
-      width: min(1540px, calc(100% - 30px));
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: clamp(32px, 6vw, 88px);
+      width: min(1280px, calc(100% - 48px));
       margin: 0 auto;
-      padding: 28px 0 54px;
     }
 
     .rail {
       position: sticky;
-      top: 28px;
-      height: calc(100vh - 56px);
-      padding: 4px 22px 0 0;
-      border-right: 1px solid var(--line);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      top: 52px;
+      align-self: start;
+      padding: 40px 0;
     }
 
-    .brand {
+    .rail a {
       display: grid;
-      gap: 2px;
-      margin-bottom: 24px;
-    }
-
-    .brand a {
-      color: var(--text);
-      font-size: 0.98rem;
-      line-height: 1.12;
-      font-weight: 760;
-      text-decoration: none;
-    }
-
-    .brand span {
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .rail nav {
-      display: grid;
-      gap: 5px;
-      font-size: 0.9rem;
-    }
-
-    .rail nav a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 160ms var(--ease), transform 160ms var(--ease);
-    }
-
-    .rail nav a:hover {
-      color: var(--text);
-      transform: translateX(3px);
-    }
-
-    .employee {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: min(184px, calc(100% - 8px));
-      margin: 0;
-      text-align: center;
-      transform: translateX(-50%);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    .employee-label {
-      width: 146px;
-      margin: 0 auto 7px;
-      color: var(--faint);
-      font-size: 0.72rem;
-      line-height: 1.18;
-      text-transform: lowercase;
-    }
-
-    .employee img {
-      display: block;
-      width: 146px;
-      height: 196px;
-      margin: 0 auto;
-      object-fit: cover;
-      object-position: center;
-      border: 6px solid rgba(239, 229, 212, 0.86);
-      outline: 1px solid var(--line-strong);
+      grid-template-columns: 2.2ch minmax(0, 1fr) auto;
+      gap: 0 1ch;
+      margin: 0 -8px;
+      padding: 4px 8px;
       border-radius: 4px;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-      filter: saturate(0.92) contrast(0.98);
+      color: var(--text);
+      text-decoration: none;
     }
 
-    .employee-note {
-      width: 146px;
-      margin: 8px auto 0;
+    .rail .dir {
+      display: grid;
+      grid-template-columns: 2.2ch minmax(0, 1fr);
+      gap: 0 1ch;
+      padding: 4px 0;
+    }
+
+    .rail a.sub {
+      grid-template-columns: 5.2ch minmax(0, 1fr) auto;
+    }
+
+    .rail .tree {
+      white-space: pre;
+    }
+
+    .rail .root {
+      grid-template-columns: minmax(0, 1fr);
+      color: var(--link);
+      font-weight: 600;
+    }
+
+    .tree,
+    .rail .n {
       color: var(--faint);
-      font-size: 0.66rem;
-      line-height: 1.28;
     }
 
-    .main {
+    .rail a[aria-current="true"],
+    .rail a:focus-visible {
+      --text: #000;
+      --faint: #000;
+      --link: #000;
+      background: var(--accent);
+    }
+
+    .pane {
       min-width: 0;
-      max-width: none;
-      animation: enter 320ms var(--ease) both;
+      padding-bottom: 72px;
     }
 
-    .hero {
-      width: min(1060px, 100%);
-      padding: 8vh 0 24px;
+    .fetch {
+      display: grid;
+      grid-template-columns: 152px minmax(0, 1fr);
+      align-items: end;
+      gap: clamp(24px, 4vw, 48px);
+      padding: 56px 0 24px;
     }
 
-    h1,
-    h2,
-    h3 {
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.12;
-      letter-spacing: 0;
+    .dog img {
+      display: block;
+      width: 152px;
+      height: 196px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .fetch figcaption {
+      margin-top: 8px;
+      color: var(--faint);
+      font-size: 0.74em;
     }
 
     h1 {
-      margin: 0 0 18px;
-      font-size: clamp(2.6rem, 8vw, 6.2rem);
-      font-weight: 790;
-      max-width: 980px;
+      font-size: clamp(1.7rem, 3.5vw, 2.7rem);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
     }
 
-    .lede {
-      max-width: 890px;
-      margin: 0;
-      color: var(--muted);
-      font-size: clamp(1.05rem, 1.7vw, 1.36rem);
+    h1 span {
+      display: block;
     }
 
-    .section {
-      width: min(1120px, 100%);
-      margin-top: 34px;
-      padding: 2px 0 0;
-    }
-
-    .valley {
-      width: min(760px, calc(100% - 42px));
-      height: 1px;
-      margin: 0 0 28px 18px;
-      background: linear-gradient(90deg, transparent, var(--line-strong) 12%, var(--line) 50%, var(--line-strong) 88%, transparent);
-      box-shadow: 0 10px 16px rgba(67, 49, 25, 0.12);
-    }
-
-    .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 16px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: clamp(1.25rem, 2vw, 1.7rem);
-    }
-
-    .count {
+    h1 span + span {
       color: var(--faint);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 0.86rem;
-      white-space: nowrap;
+      font-weight: 400;
+    }
+
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .socials a {
+      padding: 5px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .boots {
+      margin-top: 20px;
+      max-width: 640px;
+      color: var(--faint);
+      font-size: 0.8em;
+    }
+
+    .boots summary {
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    .boots summary:hover,
+    .boots[open] summary {
+      color: var(--muted);
+    }
+
+    .boots-count {
+      color: var(--accent);
+    }
+
+    .boots-lede,
+    .boots-foot {
+      margin: 12px 0;
+    }
+
+    .boots-list {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .boot {
+      display: grid;
+      grid-template-columns: 2ch 11ch minmax(0, 1fr);
+      column-gap: 8px;
+    }
+
+    .boot .mark {
+      color: var(--accent);
+    }
+
+    .boot.is-clean .mark {
+      color: #7fbf7f;
+    }
+
+    .boot .v {
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+
+    .boot .why {
+      grid-column: 3;
+    }
+
+    .boot button {
+      margin-left: 8px;
+      padding: 1px 8px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: none;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .boots a {
+      color: var(--link);
+    }
+
+    .box {
+      position: relative;
+      margin-top: 64px;
+      padding: 32px 24px 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .box-title,
+    .box-tag {
+      position: absolute;
+      top: 0;
+      padding: 0 10px;
+      background: var(--bg);
+      line-height: 1;
+      transform: translateY(-50%);
+    }
+
+    .box-title {
+      left: 16px;
+      color: var(--link);
+      font-size: 1em;
+      font-weight: 600;
+    }
+
+    .box-tag {
+      right: 16px;
+      color: var(--faint);
+      font-size: 0.8em;
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .tile {
+      display: block;
+      min-width: 0;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .thumb {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: var(--surface);
+      border-radius: 8px;
+      outline: 1px solid var(--line);
+      outline-offset: -1px;
+      transition: outline-color 120ms linear, opacity 120ms linear;
+    }
+
+    .contain {
+      padding: 12%;
+      object-fit: contain;
+    }
+
+    .thumb-text {
+      display: grid;
+      place-items: center;
+      color: var(--link);
+      font-size: clamp(1.3rem, 3vw, 2.2rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    .tile:hover .thumb,
+    .tile:focus-visible .thumb {
+      outline-color: var(--accent);
+    }
+
+    .tile-body {
+      padding-top: 10px;
+    }
+
+    .tile h3 {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .row-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 10px;
+      color: var(--faint);
+      font-size: 0.82em;
     }
 
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px;
-      margin-bottom: 8px;
+      gap: 2px 16px;
+      margin-bottom: 20px;
+      font-size: 0.86em;
     }
 
-    .filter,
-    .float-button {
-      border: 1px solid var(--line);
-      background: var(--float);
-      color: var(--muted);
-      box-shadow: var(--shadow);
+    .lucky {
+      display: grid;
+      justify-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding: 12px 0 32px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .lucky-button {
+      width: 100%;
+      max-width: 680px;
+      padding: 22px 28px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #000;
       cursor: pointer;
-      backdrop-filter: blur(16px);
-      transition: transform 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+      font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
     }
 
-    .filter {
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 0.84rem;
+    .lucky-button:hover {
+      background: #ecd09a;
     }
 
-    .filter:hover,
-    .filter.is-active,
-    .float-button:hover {
-      transform: translateY(-1px);
-      border-color: var(--line-strong);
+    .lucky-button:disabled {
+      cursor: progress;
+      opacity: 0.6;
+    }
+
+    .lucky-sub {
+      color: var(--muted);
+    }
+
+    .ask {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .ask input {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+    }
+
+    .ask input:focus {
+      border-color: var(--accent);
+      outline: 0;
+    }
+
+    .ask button,
+    .pick-actions button {
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .ask button:hover,
+    .pick-actions button:hover {
+      border-color: var(--accent);
+      color: var(--link);
+    }
+
+    .ai-note {
+      color: var(--faint);
+      font-size: 0.82em;
+    }
+
+    .ai-note span:first-child {
+      color: var(--link);
+    }
+
+    .pick {
+      width: 100%;
+      max-width: 680px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border-left: 2px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      text-align: left;
+    }
+
+    .pick h3 {
+      margin: 6px 0;
+      font-size: 1.05em;
+    }
+
+    .pick-meta {
+      color: var(--faint);
+      font-size: 0.82em;
+    }
+
+    .pick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pick-actions a {
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .read .stars {
+      color: var(--faint);
+      font-size: 0.8em;
+      white-space: nowrap;
+    }
+
+    .read-desc,
+    .pick-desc {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    .reads-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px 20px;
+    }
+
+    .reads-head .filters {
+      margin-bottom: 0;
+    }
+
+    .updated {
+      color: var(--faint);
+      font-size: 0.8em;
+    }
+
+    .day {
+      margin: 26px 0 6px;
+      color: var(--link);
+      font-size: 0.86em;
+      font-weight: 600;
+    }
+
+    .read {
+      display: grid;
+      grid-template-columns: 5ch minmax(0, 1fr);
+      gap: 0 14px;
+      margin: 0 -12px;
+      padding: 8px 12px;
+      border-radius: 6px;
       color: var(--text);
     }
 
-    .post-list {
-      margin-top: 12px;
-    }
-
-    .post {
-      display: grid;
-      grid-template-columns: minmax(112px, 12vw) minmax(0, 1fr);
-      gap: clamp(18px, 4vw, 54px);
-      padding: 24px 0;
-      color: inherit;
-      text-decoration: none;
-      border-bottom: 1px solid var(--line);
-      transition: transform 160ms var(--ease), opacity 160ms var(--ease);
-    }
-
-    .post:hover {
-      transform: translateX(5px);
-    }
-
-    .post.is-hidden {
-      display: none;
-    }
-
-    .post-meta {
+    .read time {
       color: var(--faint);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 0.82rem;
-      line-height: 1.5;
+      font-size: 0.82em;
+      line-height: 21px;
     }
 
-    .post-meta span {
-      display: block;
+    .read-title {
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
     }
 
-    .post-meta span::before {
+    .read-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 10px;
+      color: var(--faint);
+      font-size: 0.8em;
+    }
+
+    .read-meta a {
+      color: var(--faint);
+    }
+
+    .tag::before {
       content: "#";
     }
 
-    h3 {
-      margin: 0 0 8px;
-      font-size: clamp(1.08rem, 1.6vw, 1.36rem);
-    }
-
-    .post p,
-    .section p {
-      max-width: 860px;
-      margin: 0;
+    .reads-state {
       color: var(--muted);
     }
 
-    .text-block {
-      display: grid;
-      gap: 12px;
-      max-width: 920px;
+    .reads-state:empty {
+      display: none;
     }
 
-    .related-list {
-      display: grid;
-      gap: 0;
-      max-width: 940px;
+    .online {
+      flex-shrink: 0;
+      margin-left: auto;
+      color: var(--faint);
     }
 
-    .related-link {
-      display: grid;
-      grid-template-columns: minmax(120px, 16vw) minmax(0, 1fr);
-      gap: clamp(18px, 4vw, 54px);
-      padding: 18px 0;
-      border-bottom: 1px solid var(--line);
-      color: inherit;
-      text-decoration: none;
+    .online::before {
+      content: "● ";
+      color: #7fbf7f;
     }
 
-    .related-link strong {
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 0.96rem;
-    }
-
-    .related-link span {
-      color: var(--muted);
-    }
-
-    .floating-actions {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
+    .radio {
       display: flex;
+      flex-shrink: 0;
+      align-items: center;
       gap: 8px;
-      z-index: 10;
     }
 
-    .float-button {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+    .radio button {
+      padding: 0 6px;
+      border: 0;
+      background: none;
+      color: var(--link);
+      cursor: pointer;
+    }
+
+    .radio a {
+      color: var(--faint);
       text-decoration: none;
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 0.96rem;
+    }
+
+    #radio-now {
+      max-width: 34ch;
+    }
+
+    .filter {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .filter:hover,
+    .filter.is-active {
+      color: var(--link);
+    }
+
+    .filter.is-active {
+      text-decoration: underline;
+      text-underline-offset: 0.3em;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      align-items: baseline;
+      gap: 0 16px;
+      padding: 9px 12px;
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .link-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 24px;
+      margin: -4px -12px -8px;
+    }
+
+    .row.link {
+      grid-template-columns: 28px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      display: block;
+      border-radius: 6px;
+    }
+
+    @media (hover: hover) {
+      .rail a:hover,
+      .row:hover,
+      .read:hover {
+        --text: #000;
+        --muted: #000;
+        --faint: #000;
+        --link: #000;
+        background: var(--accent);
+      }
+
+      .socials a:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #000;
+      }
+    }
+
+    .row:focus-visible {
+      --text: #000;
+      --muted: #000;
+      --faint: #000;
+      --link: #000;
+      background: var(--accent);
     }
 
     footer {
-      padding: 32px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 4px 24px;
+      margin-top: 56px;
       color: var(--faint);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 0.84rem;
+      font-size: 0.82em;
     }
 
-    @keyframes enter {
-      from {
-        opacity: 0;
-        transform: translateY(7px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .status {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 28px;
+      padding-right: 14px;
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+      font-size: 0.82em;
     }
 
-    @media (max-width: 820px) {
-      .layout {
+    .status b {
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+    }
+
+    #status-hint {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .status span {
+      overflow: hidden;
+      color: var(--muted);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 760px) {
+      html {
+        scroll-padding-top: 52px;
+      }
+
+      #status-path,
+      #status-hint {
+        display: none;
+      }
+
+      .online {
+        margin-left: 12px;
+      }
+
+      .radio {
+        margin-left: auto;
+      }
+
+      .topbar {
+        position: static;
+        padding: 12px 16px;
+      }
+
+      .app {
         display: block;
-        width: min(100% - 26px, 760px);
-        padding-top: 18px;
+        width: calc(100% - 32px);
       }
 
       .rail {
-        position: static;
-        height: auto;
-        margin-bottom: 24px;
-      }
-
-      .rail nav {
+        z-index: 9;
+        top: 0;
         display: flex;
         flex-wrap: wrap;
-        gap: 14px;
+        gap: 2px 4px;
+        margin: 0 -16px;
+        padding: 8px 16px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--line);
       }
 
-      .employee {
-        position: static;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        width: auto;
-        margin-top: 16px;
-        text-align: left;
-        transform: none;
-      }
-
-      .employee-label {
-        width: auto;
+      .rail a {
+        display: block;
         margin: 0;
+        padding: 2px 6px;
       }
 
-      .employee img {
-        width: 64px;
-        height: 86px;
-        border-width: 4px;
+      .rail .root,
+      .tree,
+      .rail .n {
+        display: none;
       }
 
-      .employee-note {
-        width: auto;
-        max-width: 210px;
+      .fetch {
+        grid-template-columns: 96px minmax(0, 1fr);
+        align-items: start;
+        padding-top: 32px;
       }
 
-      .hero {
-        padding-top: 20px;
+      .dog img {
+        width: 96px;
+        height: 124px;
       }
 
-      .post,
-      .related-link {
-        grid-template-columns: 1fr;
-        gap: 8px;
+      .dog figcaption {
+        display: none;
       }
 
-      .post-meta span {
-        display: inline;
-        margin-right: 8px;
+      .box {
+        margin-top: 44px;
+        padding: 26px 14px 16px;
       }
-    }
 
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        animation: none !important;
-        transition: none !important;
+      .tiles,
+      .link-list {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .read {
+        grid-template-columns: minmax(0, 1fr);
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="layout">
-    <aside class="rail" aria-label="Navegacao lateral">
-      <div class="brand">
-        <a href="./">raimundopessoa.com</a>
-        <span data-i18n="tagline">o burro curioso</span>
-      </div>
-      <nav aria-label="Navegacao principal">
-        <a href="#posts" data-i18n="nav.posts">posts</a>
-        <a href="#metalink" data-i18n="nav.metalink">metalink</a>
-        <a href="#contribuir" data-i18n="nav.contribute">contribuir</a>
-        <a href="agents.html">AGENTS.md</a>
-      </nav>
-      <figure class="employee" aria-label="Funcionario do mes">
-        <figcaption class="employee-label" data-i18n="employee.label">funcionario do mes</figcaption>
-        <img src="assets/funcionario-do-mes.png" alt="Cachorro funcionario do mes olhando para a camera">
-        <p class="employee-note" data-i18n="employee.note">(nao deixou eu trabalhar; virou requisito de produto)</p>
-      </figure>
-    </aside>
+  <header class="topbar">
+    <a class="prompt" href="#">$:~/raimundo.sh<b id="prompt-path"></b></a>
+    <div class="topbar-right">
+      <span data-i18n="tagline">o burro curioso</span>
+      <button class="lang" type="button" id="lang-toggle" aria-label="Alternar idioma">PT</button>
+    </div>
+  </header>
 
-    <main class="main">
-      <section class="hero" aria-labelledby="intro-title">
-        <h1 id="intro-title" data-i18n="hero.title">Ideias antes de virarem certeza.</h1>
-        <p class="lede">
-          <span data-i18n="hero.lede">Um caderno publico para textos, notas e rascunhos sobre tecnologia, seguranca, IA, operacao, cultura tecnica e outras coisas que ficam martelando ate virar paragrafo.</span>
-        </p>
+  <div class="app">
+    <nav class="rail" aria-label="Navegacao principal">
+      <a class="root" href="#">~/</a>
+      <a href="#sobre" data-spy><span class="tree" aria-hidden="true">├─</span><span>sobre/</span><span class="n"></span></a>
+      <a href="#projetos" data-spy><span class="tree" aria-hidden="true">├─</span><span>projetos/</span><span class="n">4</span></a>
+      <div class="dir"><span class="tree" aria-hidden="true">├─</span><span>interesting/</span></div>
+      <a class="sub" href="#interesting-posts" data-spy data-path="/interesting/posts"><span class="tree" aria-hidden="true">│  ├─</span><span>posts/</span><span class="n" id="reads-count"></span></a>
+      <a class="sub" href="#interesting-projects" data-spy data-path="/interesting/projects"><span class="tree" aria-hidden="true">│  └─</span><span>projects/</span><span class="n" id="iproj-count"></span></a>
+      <a href="#links" data-spy><span class="tree" aria-hidden="true">├─</span><span>links/</span><span class="n">5</span></a>
+      <a href="agents.html"><span class="tree" aria-hidden="true">└─</span><span>AGENTS.md</span><span class="n"></span></a>
+    </nav>
+
+    <main class="pane">
+      <section id="sobre" class="fetch" aria-labelledby="intro-title">
+        <figure class="dog">
+          <img src="assets/thumbs/funcionario.webp" alt="Cachorro funcionario do mes olhando para a camera" width="320" height="434">
+          <figcaption data-i18n="employee.label">funcionario do mes</figcaption>
+        </figure>
+        <div>
+          <h1 id="intro-title"><span data-i18n="hero.title">Coisas que me interessam</span><span data-i18n="hero.sub">e também podem te interessar.</span></h1>
+          <!-- Bio e experiencia entram aqui a partir do export do LinkedIn. -->
+          <div class="socials">
+            <a href="https://github.com/hi-mundo" rel="me noopener">github</a>
+            <a href="https://www.linkedin.com/in/hi-mundo" rel="me noopener">linkedin</a>
+            <a href="https://instagram.com/__hi.mundo" rel="me noopener">instagram</a>
+          </div>
+          <!-- Limpe suas botas: so le o que o proprio browser entrega a qualquer site. Nada sai daqui. -->
+          <details class="boots" id="boots">
+            <summary><span data-i18n="boots.title">heyy, limpe suas botas antes de entrar</span> <span class="boots-count" id="boots-count"></span></summary>
+            <p class="boots-lede" data-i18n="boots.lede">cada opção de privacidade desligada deixa uma migalha. as suas:</p>
+            <ul class="boots-list" id="boots-list"></ul>
+            <p class="boots-foot"><span data-i18n="boots.foot">limpar cookies no</span> <a href="https://support.google.com/chrome/answer/95647" rel="noopener">Chrome</a> · <a href="https://support.mozilla.org/kb/clear-cookies-and-site-data-firefox" rel="noopener">Firefox</a> · <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" rel="noopener">Safari</a></p>
+          </details>
+        </div>
       </section>
 
-      <section id="posts" class="section" aria-labelledby="posts-title">
-        <div class="valley"></div>
-        <div class="section-head">
-          <h2 id="posts-title" data-i18n="posts.title">Posts recentes</h2>
-          <span class="count"><span id="visible-count">4</span> <span data-i18n="posts.visible">visiveis</span></span>
-        </div>
-        <div class="filters" role="list" aria-label="Filtrar posts">
-          <button class="filter is-active" type="button" data-filter="all" data-i18n="filter.all">todos</button>
-          <button class="filter" type="button" data-filter="tech">tech</button>
-          <button class="filter" type="button" data-filter="ia">IA</button>
-          <button class="filter" type="button" data-filter="operacao" data-i18n="filter.ops">operacao</button>
-          <button class="filter" type="button" data-filter="ideias" data-i18n="filter.ideas">ideias</button>
-          <button class="filter" type="button" data-filter="vibecoding">vibecoding</button>
-        </div>
-
-        <div class="post-list">
-          <a class="post" href="posts/como-este-site-esta-sendo-construido.html" data-tags="tech ia vibecoding ideias">
-            <div class="post-meta">
-              <time datetime="2026-06-25">25/06/2026</time>
-              <span>vibecoding</span>
-              <span data-i18n="status.draft">rascunho</span>
-            </div>
-            <div>
-              <h3 data-i18n="post.site.title">Como este site esta sendo construido</h3>
-              <p data-i18n="post.site.summary">Um registro honesto dos prompts, decisoes ruins, correcoes de rota e pequenas vergonhas tecnicas que fazem parte de construir com IA.</p>
+      <section id="projetos" class="box" aria-labelledby="projetos-title">
+        <h2 id="projetos-title" class="box-title">~/projetos</h2>
+        <span class="box-tag">github</span>
+        <!-- Amostra estatica de api.github.com/users/hi-mundo/repos: o proximo slice troca por fetch no browser. -->
+        <div class="tiles">
+          <a class="tile" href="https://github.com/hi-mundo/structured-vibe-code-plugin" rel="noopener">
+            <img class="thumb " src="https://raw.githubusercontent.com/hi-mundo/structured-vibe-code-plugin/HEAD/assets/banner.png" alt="" loading="lazy">
+            <div class="tile-body">
+              <h3>structured-vibe-code-plugin</h3>
+              <div class="row-meta"><span>Python</span><time>02/11/2026</time></div>
+              <p class="hint">AI pair-programming plugin for Claude Code and Codex.</p>
             </div>
           </a>
-
-          <a class="post" href="posts/ia-escreve-codigo-rapido.html" data-tags="tech ia operacao">
-            <div class="post-meta">
-              <time datetime="2026-06-25">25/06/2026</time>
-              <span>IA</span>
-              <span data-i18n="status.reorg">reorganizando</span>
-            </div>
-            <div>
-              <h3 data-i18n="post.ai.title">IA escreve codigo rapido. A conta vem depois.</h3>
-              <p data-i18n="post.ai.summary">O problema nao e usar IA. O problema e tratar volume de codigo como progresso quando ninguem sabe quem vai manter a criatura.</p>
+          <a class="tile" href="https://github.com/hi-mundo/HomeSweetHome" rel="noopener">
+            <img class="thumb " src="https://raw.githubusercontent.com/hi-mundo/HomeSweetHome/HEAD/docs/screenshot.jpg" alt="" loading="lazy">
+            <div class="tile-body">
+              <h3>HomeSweetHome</h3>
+              <div class="row-meta"><span>Python</span><time>02/11/2026</time></div>
+              <p class="hint">Self-hosted kitchen &amp; household assistant.</p>
             </div>
           </a>
-
-          <a class="post" href="posts/post-mortem-como-literatura-tecnica.html" data-tags="tech operacao">
-            <div class="post-meta">
-              <time datetime="2026-06-25">25/06/2026</time>
-              <span data-i18n="tag.ops">operacao</span>
-              <span data-i18n="status.note">nota</span>
-            </div>
-            <div>
-              <h3 data-i18n="post.pm.title">O post-mortem como literatura tecnica</h3>
-              <p data-i18n="post.pm.summary">Incidentes contam a verdade que o roadmap esconde. O resto e decoracao em slide com nome bonito.</p>
+          <a class="tile" href="https://github.com/hi-mundo/AIssuer" rel="noopener">
+            <img class="thumb contain" src="https://raw.githubusercontent.com/hi-mundo/AIssuer/HEAD/assets/logo.png" alt="" loading="lazy">
+            <div class="tile-body">
+              <h3>AIssuer</h3>
+              <div class="row-meta"><span>Python</span><span>★ 1</span><time>28/07/2026</time></div>
+              <p class="hint">Hypothesis-driven issue and bug discovery.</p>
             </div>
           </a>
-
-          <a class="post" href="posts/roteiros-sonhos-e-bugs-do-sono.html" data-tags="ideias">
-            <div class="post-meta">
-              <time datetime="2026-06-25">25/06/2026</time>
-              <span data-i18n="tag.ideas">ideias</span>
-              <span data-i18n="status.queue">fila</span>
-            </div>
-            <div>
-              <h3 data-i18n="post.dreams.title">Roteiros, sonhos e outros bugs do sono</h3>
-              <p data-i18n="post.dreams.summary">Algumas ideias nao querem virar artigo tecnico. Elas so querem um canto onde possam existir sem pedir permissao para o LinkedIn.</p>
+          <a class="tile" href="https://github.com/hi-mundo/SIGNAL" rel="noopener">
+            <div class="thumb thumb-text" aria-hidden="true">SIGNAL</div>
+            <div class="tile-body">
+              <h3>SIGNAL</h3>
+              <div class="row-meta"><span>Python</span><span>★ 4</span><time>14/07/2026</time></div>
+              <p class="hint">A pattern framework for LLM UX and human-AI interaction.</p>
             </div>
           </a>
         </div>
       </section>
 
-      <section id="metalink" class="section" aria-labelledby="metalink-title">
-        <div class="valley"></div>
-        <div class="text-block">
-          <h2 id="metalink-title">Metalink</h2>
-          <p>
-            <span data-i18n-html="metalink.copy"><a href="https://odisseiadoputo.cc">odisseiadoputo.cc</a> fica como canto separado para viagens tech ou nao, ideias de roteiro, sonhos e textos que nao precisam fingir normalidade para passar na recepcao.</span>
-          </p>
+      <section id="interesting-posts" class="box" aria-labelledby="posts-title">
+        <h2 id="posts-title" class="box-title">~/interesting/posts</h2>
+        <span class="box-tag" id="reads-tag"></span>
+        <div class="lucky">
+          <button class="lucky-button" type="button" id="lucky" data-i18n="reads.lucky">me dá algo interessante pra ler</button>
+          <p class="lucky-sub" data-i18n="reads.sub">mantenha-se atualizado do que está rolando agora.</p>
+          <form class="ask" id="ask">
+            <input id="ask-input" type="text" autocomplete="off" aria-label="O que você quer ler" placeholder="ou diga o que você quer ler…">
+            <button type="submit" data-i18n="reads.go">buscar</button>
+          </form>
+          <p class="ai-note"><span data-i18n="reads.note">a IA roda no seu browser (é anônimo hihi)</span> · <span class="lucky-state" id="lucky-state" data-i18n="reads.model">modelinho de 118 MB, baixa uma vez</span></p>
+          <div id="pick" class="pick" hidden aria-live="polite"></div>
         </div>
+        <div class="reads-head">
+          <div class="filters" id="tag-filters" role="group" aria-label="Filtrar por tag"></div>
+          <span class="updated" id="reads-updated"></span>
+        </div>
+        <div id="reads"></div>
+        <p class="reads-state" id="reads-state" role="status"></p>
+        <noscript><p class="reads-state">As leituras precisam de JavaScript.</p></noscript>
       </section>
 
-      <section id="contribuir" class="section" aria-labelledby="contribuir-title">
-        <div class="valley"></div>
-        <div class="text-block">
-          <h2 id="contribuir-title" data-i18n="contribute.title">Contribuir</h2>
-          <p>
-            <span data-i18n="contribute.copy">Achou erro, quer complementar fonte, discordou de uma conclusao ou quer propor um texto? Abra um PR no repositorio publico do website.</span>
-          </p>
+      <section id="interesting-projects" class="box" aria-labelledby="iproj-title">
+        <h2 id="iproj-title" class="box-title">~/interesting/projects</h2>
+        <span class="box-tag" id="iproj-tag"></span>
+        <div class="lucky">
+          <button class="lucky-button" type="button" data-i18n="proj.lucky">me mostra um projeto legal</button>
+          <p class="lucky-sub" data-i18n="proj.sub">o que está em alta no Hugging Face e no GitHub esta semana.</p>
+          <form class="ask">
+            <input id="iproj-input" type="text" autocomplete="off" aria-label="Que projeto você procura" placeholder="ou diga que tipo de projeto você quer…">
+            <button type="submit" data-i18n="reads.go">buscar</button>
+          </form>
+          <p class="ai-note"><span data-i18n="reads.note">a IA roda no seu browser (é anônimo hihi)</span> · <span class="lucky-state" data-i18n="reads.model">modelinho de 118 MB, baixa uma vez</span></p>
+          <div class="pick" hidden aria-live="polite"></div>
         </div>
+        <div class="reads-head">
+          <div class="filters" id="iproj-filters" role="group" aria-label="Filtrar por fonte"></div>
+          <span class="updated" id="iproj-updated"></span>
+        </div>
+        <div id="iproj-list"></div>
+        <p class="reads-state" id="iproj-state" role="status"></p>
       </section>
 
-      <section class="section" aria-labelledby="related-title">
-        <div class="valley"></div>
-        <h2 id="related-title" data-i18n="bottom.title">No rodape da pilha</h2>
-        <div class="related-list">
-          <a class="related-link" href="agents.html">
-            <strong>AGENTS.md</strong>
-            <span data-i18n="bottom.agents">Contrato editorial publico para orientar agentes sem vazar regra pessoal.</span>
+      <section id="links" class="box" aria-labelledby="links-title">
+        <h2 id="links-title" class="box-title">~/links</h2>
+        <span class="box-tag" data-i18n="links.source">curadoria + stars</span>
+        <div class="link-list">
+          <a class="row link" id="metalink" href="https://odisseiadoputo.cc" rel="noopener">
+            <img class="avatar" src="https://github.com/hi-mundo.png?size=64" alt="" width="28" height="28" loading="lazy">
+            <h3>odisseiadoputo.cc</h3>
+            <p class="hint"><span data-i18n="links.odisseia">Canto separado para viagens tech ou nao, ideias de roteiro, sonhos e textos que nao precisam fingir normalidade.</span></p>
           </a>
-          <a class="related-link" href="#contribuir">
-            <strong>0800</strong>
-            <span data-i18n="bottom.free">Se um dia existir notificacao por e-mail, a promessa e so receber o post quando sair.</span>
+          <!-- Amostra estatica das stars de hi-mundo: o proximo slice troca por fetch no browser. -->
+          <a class="row link" href="https://github.com/NoraCodes/crackmes" rel="noopener">
+            <img class="avatar" src="https://github.com/NoraCodes.png?size=64" alt="" width="28" height="28" loading="lazy">
+            <h3>crackmes</h3>
+            <p class="hint">Some CrackMe codes for Linux x86/x86_64</p>
+          </a>
+          <a class="row link" href="https://github.com/Hack-with-Github/Awesome-Hacking" rel="noopener">
+            <img class="avatar" src="https://github.com/Hack-with-Github.png?size=64" alt="" width="28" height="28" loading="lazy">
+            <h3>Awesome-Hacking</h3>
+            <p class="hint">Awesome lists for hackers, pentesters and security researchers</p>
+          </a>
+          <a class="row link" href="https://github.com/psachin/kernel_modules" rel="noopener">
+            <img class="avatar" src="https://github.com/psachin.png?size=64" alt="" width="28" height="28" loading="lazy">
+            <h3>kernel_modules</h3>
+            <p class="hint">linux kernel modules examples</p>
+          </a>
+          <a class="row link" href="https://github.com/ysymyth/awesome-language-agents" rel="noopener">
+            <img class="avatar" src="https://github.com/ysymyth.png?size=64" alt="" width="28" height="28" loading="lazy">
+            <h3>awesome-language-agents</h3>
+            <p class="hint">List of language agents</p>
           </a>
         </div>
       </section>
 
-      <footer>
-        <p data-i18n="footer">raimundopessoa.com · textos primeiro, pose depois</p>
+      <footer id="contribuir">
+        <p data-i18n="footer">raimundo.sh · textos primeiro, pose depois</p>
+        <a href="https://github.com/hi-mundo/raimundo.sh" rel="noopener" data-i18n="contribute.title">Contribuir</a>
       </footer>
     </main>
   </div>
 
-  <div class="floating-actions" aria-label="Acoes rapidas">
-    <button class="float-button" type="button" id="lang-toggle" aria-label="Alternar idioma">PT</button>
-    <a class="float-button" href="#posts" aria-label="Ir para posts">#</a>
-    <a class="float-button" href="./" aria-label="Voltar ao topo">↑</a>
+  <div class="status">
+    <b id="status-path" aria-hidden="true">~/raimundo.sh</b>
+    <span id="status-hint" aria-hidden="true"></span>
+    <span class="online" id="online" title="leitores online"></span>
+    <div class="radio">
+      <button type="button" id="radio-play" aria-label="Tocar rádio">▶</button>
+      <button type="button" id="radio-next" aria-label="Próxima estação">›</button>
+      <span id="radio-now">rádio</span>
+      <a href="https://somafm.com/support/" rel="noopener" data-i18n="radio.support">SomaFM ♥</a>
+    </div>
   </div>
 
   <script>
-    const translations = {
+    const translations = window.siteText = {
       pt: {
         "tagline": "o burro curioso",
         "nav.posts": "posts",
@@ -603,34 +1059,82 @@
         "nav.contribute": "contribuir",
         "employee.label": "funcionario do mes",
         "employee.note": "(nao deixou eu trabalhar; virou requisito de produto)",
-        "hero.title": "Ideias antes de virarem certeza.",
+        "reads.lucky": "me dá algo interessante pra ler",
+        "reads.sub": "mantenha-se atualizado do que está rolando agora.",
+        "reads.ask": "ou diga o que você quer ler…",
+        "reads.go": "buscar",
+        "reads.note": "a IA roda no seu browser (é anônimo hihi)",
+        "reads.model": "modelinho de 118 MB, baixa uma vez",
+        "reads.loading": "carregando o modelinho",
+        "reads.reading": "lendo as manchetes",
+        "reads.ready": "modelinho pronto",
+        "reads.open": "ler na fonte →",
+        "reads.another": "outra",
+        "reads.why": "parece com",
+        "reads.asked": "parecido com o que você pediu",
+        "reads.all": "todas",
+        "reads.today": "hoje",
+        "reads.yesterday": "ontem",
+        "reads.items": "leituras",
+        "reads.sources": "fontes",
+        "reads.updated": "atualizado às",
+        "reads.discussion": "discussão",
+        "reads.error": "As leituras não carregaram. Recarregue a página.",
+        "reads.aiError": "O modelinho falhou neste browser. Tente de novo.",
+        "radio.play": "Tocar rádio",
+        "radio.pause": "Pausar rádio",
+        "radio.support": "SomaFM ♥",
+        "online": "lendo agora",
+        "radio.error": "fora do ar agora",
+        "proj.lucky": "me mostra um projeto legal",
+        "proj.sub": "o que está em alta no Hugging Face e no GitHub esta semana.",
+        "proj.ask": "ou diga que tipo de projeto você quer…",
+        "proj.items": "projetos",
+        "proj.error": "Os projetos não carregaram. Recarregue a página.",
+        "boots.title": "heyy, limpe suas botas antes de entrar",
+        "boots.lede": "cada opção de privacidade desligada deixa uma migalha. as suas:",
+        "boots.foot": "limpar cookies no",
+        "boots.crumbs": "migalhas",
+        "boots.clean": "botas limpas",
+        "boots.referrer": "veio de",
+        "boots.referrerWhy": "o site anterior contou pra gente",
+        "boots.referrerNone": "ninguém contou de onde você veio",
+        "boots.history": "esta aba",
+        "boots.historyValue": "já passou por {n} páginas",
+        "boots.historyWhy": "qualquer site lê esse número",
+        "boots.blocker": "bloqueador",
+        "boots.blockerOff": "nenhum",
+        "boots.blockerOn": "ligado",
+        "boots.blockerWhy": "rastreadores carregam livres",
+        "boots.gpc": "GPC / DNT",
+        "boots.gpcOff": "desligado",
+        "boots.gpcOn": "ligado",
+        "boots.gpcWhy": "você não pediu pra não ser seguido",
+        "boots.third": "terceiros",
+        "boots.thirdOn": "provavelmente ligados",
+        "boots.thirdOff": "bloqueados por padrão",
+        "boots.thirdWhy": "cookies seguem você de site em site",
+        "boots.card": "sua ficha",
+        "boots.cardWhy": "junto, isso quase te identifica sem cookie nenhum",
+        "boots.cores": "núcleos",
+        "boots.site": "este site",
+        "boots.siteValue": "{c} cookies · {s} itens guardados",
+        "boots.wipe": "limpar",
+        "hero.title": "Coisas que me interessam",
+        "hero.sub": "e também podem te interessar.",
+        "nav.projects": "projetos",
+        "nav.links": "links",
+        "nav.about": "sobre",
+        "links.source": "curadoria + stars",
+        "links.odisseia": "Canto separado para viagens tech ou nao, ideias de roteiro, sonhos e textos que nao precisam fingir normalidade.",
         "hero.lede": "Um caderno publico para textos, notas e rascunhos sobre tecnologia, seguranca, IA, operacao, cultura tecnica e outras coisas que ficam martelando ate virar paragrafo.",
-        "posts.title": "Posts recentes",
-        "posts.visible": "visiveis",
-        "filter.all": "todos",
-        "filter.ops": "operacao",
-        "filter.ideas": "ideias",
-        "status.draft": "rascunho",
-        "status.reorg": "reorganizando",
-        "status.note": "nota",
-        "status.queue": "fila",
-        "tag.ops": "operacao",
-        "tag.ideas": "ideias",
-        "post.site.title": "Como este site esta sendo construido",
-        "post.site.summary": "Um registro honesto dos prompts, decisoes ruins, correcoes de rota e pequenas vergonhas tecnicas que fazem parte de construir com IA.",
-        "post.ai.title": "IA escreve codigo rapido. A conta vem depois.",
-        "post.ai.summary": "O problema nao e usar IA. O problema e tratar volume de codigo como progresso quando ninguem sabe quem vai manter a criatura.",
-        "post.pm.title": "O post-mortem como literatura tecnica",
-        "post.pm.summary": "Incidentes contam a verdade que o roadmap esconde. O resto e decoracao em slide com nome bonito.",
-        "post.dreams.title": "Roteiros, sonhos e outros bugs do sono",
-        "post.dreams.summary": "Algumas ideias nao querem virar artigo tecnico. Elas so querem um canto onde possam existir sem pedir permissao para o LinkedIn.",
         "metalink.copy": "<a href=\"https://odisseiadoputo.cc\">odisseiadoputo.cc</a> fica como canto separado para viagens tech ou nao, ideias de roteiro, sonhos e textos que nao precisam fingir normalidade para passar na recepcao.",
         "contribute.title": "Contribuir",
         "contribute.copy": "Achou erro, quer complementar fonte, discordou de uma conclusao ou quer propor um texto? Abra um PR no repositorio publico do website.",
         "bottom.title": "No rodape da pilha",
         "bottom.agents": "Contrato editorial publico para orientar agentes sem vazar regra pessoal.",
         "bottom.free": "Se um dia existir notificacao por e-mail, a promessa e so receber o post quando sair.",
-        "footer": "raimundopessoa.com · textos primeiro, pose depois"
+        "footer": "raimundo.sh · textos primeiro, pose depois"
       },
       en: {
         "tagline": "the curious fool",
@@ -639,41 +1143,86 @@
         "nav.contribute": "contribute",
         "employee.label": "employee of the month",
         "employee.note": "(blocked real work; became a product requirement)",
-        "hero.title": "Ideas before they become certainty.",
+        "reads.lucky": "give me something interesting to read",
+        "reads.sub": "stay up to date with what's happening right now.",
+        "reads.ask": "or tell me what you want to read…",
+        "reads.go": "find",
+        "reads.note": "the AI runs in your browser (it's anonymous hihi)",
+        "reads.model": "118 MB model, downloads once",
+        "reads.loading": "loading the model",
+        "reads.reading": "reading the headlines",
+        "reads.ready": "model ready",
+        "reads.open": "read at the source →",
+        "reads.another": "another",
+        "reads.why": "looks like",
+        "reads.asked": "close to what you asked",
+        "reads.all": "all",
+        "reads.today": "today",
+        "reads.yesterday": "yesterday",
+        "reads.items": "reads",
+        "reads.sources": "sources",
+        "reads.updated": "updated at",
+        "reads.discussion": "discussion",
+        "reads.error": "The reads did not load. Reload the page.",
+        "reads.aiError": "The model failed in this browser. Try again.",
+        "radio.play": "Play radio",
+        "radio.pause": "Pause radio",
+        "radio.support": "SomaFM ♥",
+        "online": "reading now",
+        "radio.error": "off the air right now",
+        "proj.lucky": "show me a cool project",
+        "proj.sub": "what's trending on Hugging Face and GitHub this week.",
+        "proj.ask": "or tell me what kind of project you want…",
+        "proj.items": "projects",
+        "proj.error": "The projects did not load. Reload the page.",
+        "boots.title": "heyy, wipe your boots before coming in",
+        "boots.lede": "every privacy option left off drops a crumb. yours:",
+        "boots.foot": "clear cookies in",
+        "boots.crumbs": "crumbs",
+        "boots.clean": "clean boots",
+        "boots.referrer": "came from",
+        "boots.referrerWhy": "the previous site told us",
+        "boots.referrerNone": "nobody told us where you came from",
+        "boots.history": "this tab",
+        "boots.historyValue": "has been through {n} pages",
+        "boots.historyWhy": "any site can read this number",
+        "boots.blocker": "blocker",
+        "boots.blockerOff": "none",
+        "boots.blockerOn": "on",
+        "boots.blockerWhy": "trackers load freely",
+        "boots.gpc": "GPC / DNT",
+        "boots.gpcOff": "off",
+        "boots.gpcOn": "on",
+        "boots.gpcWhy": "you did not ask not to be tracked",
+        "boots.third": "third-party",
+        "boots.thirdOn": "probably allowed",
+        "boots.thirdOff": "blocked by default",
+        "boots.thirdWhy": "cookies follow you from site to site",
+        "boots.card": "your card",
+        "boots.cardWhy": "together, this nearly identifies you without any cookie",
+        "boots.cores": "cores",
+        "boots.site": "this site",
+        "boots.siteValue": "{c} cookies · {s} items stored",
+        "boots.wipe": "wipe",
+        "hero.title": "Things that interest me",
+        "hero.sub": "and might interest you too.",
+        "nav.projects": "projects",
+        "nav.links": "links",
+        "nav.about": "about",
+        "links.source": "curated + stars",
+        "links.odisseia": "A separate corner for tech trips or not, script ideas, dreams, and texts that do not need to pretend normality.",
         "hero.lede": "A public notebook for texts, notes, and drafts about technology, security, AI, operations, technical culture, and the things that keep knocking around until they become paragraphs.",
-        "posts.title": "Recent posts",
-        "posts.visible": "visible",
-        "filter.all": "all",
-        "filter.ops": "operations",
-        "filter.ideas": "ideas",
-        "status.draft": "draft",
-        "status.reorg": "reorganizing",
-        "status.note": "note",
-        "status.queue": "queue",
-        "tag.ops": "operations",
-        "tag.ideas": "ideas",
-        "post.site.title": "How this site is being built",
-        "post.site.summary": "An honest record of prompts, bad decisions, course corrections, and small technical embarrassments that come with building with AI.",
-        "post.ai.title": "AI writes code fast. The bill comes later.",
-        "post.ai.summary": "The problem is not using AI. The problem is treating code volume as progress when nobody knows who will maintain the thing.",
-        "post.pm.title": "The postmortem as technical literature",
-        "post.pm.summary": "Incidents tell the truth the roadmap hides. The rest is decoration in a slide with a pretty name.",
-        "post.dreams.title": "Scripts, dreams, and other sleep bugs",
-        "post.dreams.summary": "Some ideas do not want to become technical articles. They only need a corner where they can exist without asking LinkedIn for permission.",
         "metalink.copy": "<a href=\"https://odisseiadoputo.cc\">odisseiadoputo.cc</a> stays as a separate corner for tech trips or not, script ideas, dreams, and texts that do not need to pretend normality at reception.",
         "contribute.title": "Contribute",
         "contribute.copy": "Found an error, want to add a source, disagree with a conclusion, or want to propose a text? Open a PR in the website's public repository.",
         "bottom.title": "At the bottom of the stack",
         "bottom.agents": "Public editorial contract for guiding agents without leaking personal rules.",
         "bottom.free": "If email notification ever exists, the promise is only to receive the post when it ships.",
-        "footer": "raimundopessoa.com · text first, posing later"
+        "footer": "raimundo.sh · text first, posing later"
       }
     };
 
     const langToggle = document.getElementById("lang-toggle");
-    const filterButtons = document.querySelectorAll(".filter");
-    const posts = document.querySelectorAll(".post");
-    const visibleCount = document.getElementById("visible-count");
 
     function initialLanguage() {
       const saved = sessionStorage.getItem("site-lang");
@@ -694,6 +1243,7 @@
       langToggle.textContent = lang.toUpperCase();
       langToggle.setAttribute("aria-label", lang === "pt" ? "Alternar idioma para ingles" : "Switch language to Portuguese");
       sessionStorage.setItem("site-lang", lang);
+      document.dispatchEvent(new Event("site-lang"));
     }
 
     applyLanguage(initialLanguage());
@@ -703,23 +1253,863 @@
       applyLanguage(current === "pt" ? "en" : "pt");
     });
 
-    filterButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const filter = button.dataset.filter;
-        filterButtons.forEach((item) => item.classList.remove("is-active"));
-        button.classList.add("is-active");
+    // Rail: acompanha o scroll do pane; prompt e status bar mostram a secao atual.
+    const sections = [...document.querySelectorAll("#sobre, .pane .box")];
+    const spyLinks = document.querySelectorAll("[data-spy]");
+    const promptPath = document.getElementById("prompt-path");
+    const statusPath = document.getElementById("status-path");
+    const statusHint = document.getElementById("status-hint");
+    let lockedUntil = 0;
 
-        let count = 0;
-        posts.forEach((post) => {
-          const tags = post.dataset.tags.split(" ");
-          const show = filter === "all" || tags.includes(filter);
-          post.classList.toggle("is-hidden", !show);
-          if (show) count += 1;
-        });
+    function markActive(id) {
+      spyLinks.forEach((link) => {
+        if (link.getAttribute("href") === `#${id}`) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      });
+      // A home do terminal e o proprio ~/raimundo.sh; sobre/ mora nela.
+      // Secoes dentro de pastas (interesting/) dizem o caminho no data-path do rail.
+      const link = [...spyLinks].find((item) => item.getAttribute("href") === `#${id}`);
+      const path = id === "sobre" ? "" : link?.dataset.path ?? `/${id}`;
+      promptPath.textContent = path;
+      statusPath.textContent = `~/raimundo.sh${path}`;
+    }
 
-        visibleCount.textContent = count;
+    function spy() {
+      if (Date.now() < lockedUntil) return;
+      const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      let current = "sobre";
+      sections.forEach((section) => {
+        if (section.getBoundingClientRect().top <= 110) current = section.id;
+      });
+      markActive(atEnd && window.scrollY > 0 ? sections[sections.length - 1].id : current);
+    }
+
+    // Clique no rail manda: o spy espera o scroll suave terminar para nao marcar outra secao.
+    spyLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        lockedUntil = Date.now() + 900;
+        markActive(link.getAttribute("href").slice(1));
       });
     });
+
+    window.addEventListener("scroll", spy, { passive: true });
+    spy();
+
+    // Status bar: mostra o resumo ou o destino do item sob o cursor ou o foco.
+    function showHint(event) {
+      const item = event.target.closest && event.target.closest("a");
+      if (!item) {
+        statusHint.textContent = "";
+        return;
+      }
+      const hint = item.querySelector(".hint");
+      statusHint.textContent = hint ? hint.textContent : item.href.replace(/^https?:\/\//, "");
+    }
+    document.addEventListener("pointerover", showHint);
+    document.addEventListener("focusin", showHint);
+  </script>
+
+  <script type="module">
+    // ~/interesting/posts e ~/interesting/projects: listas buscadas ao vivo pelo browser de
+    // quem visita e um modelinho de embeddings, tambem no browser, que escolhe um item.
+    // O modelo so compara textos; nao escreve nada, entao nao inventa nada.
+    const AI_LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2/+esm";
+    const MODEL = "Xenova/paraphrase-multilingual-MiniLM-L12-v2";
+
+    // O que conta como "interessante" no botao grande. Cada frase vira um motivo.
+    const INTEREST = [
+      ["how attackers broke in: a real security incident or exploit write-up", "incidentes de segurança reais", "real security incidents"],
+      ["practical AI in real software, without hype", "IA aplicada sem hype", "practical AI without hype"],
+      ["what broke in production and how it was fixed", "o que quebrou em produção", "what broke in production"],
+      ["a deep technical explanation of how something works under the hood", "engenharia por dentro", "engineering under the hood"],
+      ["weird or retro computing, reverse engineering and clever hacks", "computação esquisita e retrô", "weird and retro computing"],
+      ["curious science or the history of technology", "ciência e história curiosas", "curious science and history"],
+      ["ataque hacker ou incidente de segurança no Brasil", "segurança no Brasil", "security in Brazil"],
+    ];
+    const POOL = 12;
+
+    const lang = () => (document.documentElement.lang.startsWith("pt") ? "pt" : "en");
+    const t = (key) => window.siteText[lang()][key];
+    const $ = (id) => document.getElementById(id);
+
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    // ---------- banco local
+    // IndexedDB do proprio visitante: guarda as listas, os vetores do modelinho e o que
+    // ele ja sorteou. Nada sai do browser; o [limpar] das botas apaga tudo.
+    const store = (() => {
+      let connection;
+      const open = () =>
+        (connection ??= new Promise((resolve, reject) => {
+          const request = indexedDB.open("raimundo-sh", 1);
+          request.onupgradeneeded = () => request.result.createObjectStore("kv");
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        }));
+      async function run(mode, action) {
+        const db = await open();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction("kv", mode);
+          const request = action(tx.objectStore("kv"));
+          tx.oncomplete = () => resolve(request.result);
+          tx.onerror = () => reject(tx.error);
+        });
+      }
+      // Sem IndexedDB (aba privada, storage bloqueado) o site so nao lembra nada.
+      return {
+        get: (key) => run("readonly", (kv) => kv.get(key)).catch(() => undefined),
+        set: (key, value) => run("readwrite", (kv) => kv.put(value, key)).catch(() => undefined),
+        clear: () => run("readwrite", (kv) => kv.clear()).catch(() => undefined),
+      };
+    })();
+
+    // ---------- fontes ao vivo
+    // So fontes que deixam o browser ler direto (CORS aberto): sem servidor, sem JSON no repo.
+    const DAY = 86400000;
+    const unix = (days) => Math.floor((Date.now() - days * DAY) / 1000);
+    const isoDay = (days) => new Date(Date.now() - days * DAY).toISOString().slice(0, 10);
+    const hnDiscussion = (hit) => `https://news.ycombinator.com/item?id=${hit.objectID}`;
+
+    // Fontes de seguranca: tudo que vem delas ja nasce com essa tag.
+    const SOURCE_TAGS = { hnsec: ["seguranca"], devsec: ["seguranca"] };
+
+    // Palavras no titulo que puxam cada tag (ingles e portugues).
+    const WORD_TAGS = {
+      seguranca: /\b(hack|hacker|breach|exploit|vulnerab|ransomware|malware|backdoor|zero-day|cve-|phishing|attack|ataque|vazamento|golpe|spyware|botnet|security|seguran[cç]a)/i,
+      ia: /\b(ai|llm|gpt|claude|gemini|llama|model|agent|machine learning|neural|inference|ia|intelig[eê]ncia artificial)\b/i,
+      dev: /\b(programming|compiler|rust|python|golang|javascript|typescript|node\.js|\.net|gleam|sqlite|git|api|framework|library|release|c\+\+|kernel|programa[cç][aã]o|c[oó]digo)\b/i,
+      infra: /\b(linux|cloud|aws|azure|server|outage|dns|network|database|kubernetes|docker|datacenter|infra|servidor)/i,
+      hardware: /\b(chip|cpu|gpu|amd|intel|nvidia|arm|risc-v|hardware|device|starlink|raspberry|keyboard|display|asic|eletr[oô]nica)/i,
+      privacidade: /\b(privacy|surveillance|tracking|fingerprint|encryption|gdpr|lgpd|privacidade|censor)/i,
+      ciencia: /\b(science|physics|planet|space|nasa|biology|math|research|study|ci[eê]ncia|universe)/i,
+      games: /\b(game|gaming|doom|nintendo|steam|emulator|jogo)/i,
+    };
+
+    function tagsFor(item, source) {
+      const words = Object.entries(WORD_TAGS).filter(([, pattern]) => pattern.test(item.title)).map(([name]) => name);
+      return [...new Set([...(item.tags ?? []), ...(SOURCE_TAGS[source.id] ?? []), ...words])].slice(0, 3);
+    }
+
+    function atomItems(xml) {
+      const doc = new DOMParser().parseFromString(xml, "application/xml");
+      return [...doc.querySelectorAll("entry")].map((entry) => ({
+        title: entry.querySelector("title")?.textContent.trim(),
+        url: (entry.querySelector('link[rel="alternate"]') ?? entry.querySelector("link"))?.getAttribute("href"),
+        date: entry.querySelector("published, updated")?.textContent,
+      }));
+    }
+
+    const POST_SOURCES = [
+      { id: "hn", name: "Hacker News", url: () => "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=60",
+        map: (d) => d.hits.filter((h) => h.url).map((h) => ({ title: h.title, url: h.url, date: h.created_at, discussion: hnDiscussion(h) })) },
+      { id: "hnsec", name: "Hacker News", url: () => `https://hn.algolia.com/api/v1/search_by_date?tags=story&query=security&numericFilters=points>30,created_at_i>${unix(4)}&hitsPerPage=30`,
+        map: (d) => d.hits.filter((h) => h.url).map((h) => ({ title: h.title, url: h.url, date: h.created_at, discussion: hnDiscussion(h) })) },
+      { id: "simonw", name: "Simon Willison", url: () => "https://simonwillison.net/atom/everything/", xml: true, map: atomItems },
+      { id: "devsec", name: "dev.to", url: () => "https://dev.to/api/articles?tag=security&top=4&per_page=15",
+        map: (d) => d.map((a) => ({ title: a.title, url: a.url, date: a.published_at })) },
+      { id: "devai", name: "dev.to", url: () => "https://dev.to/api/articles?tag=ai&top=4&per_page=15",
+        map: (d) => d.map((a) => ({ title: a.title, url: a.url, date: a.published_at })) },
+      { id: "tabnews", name: "TabNews", url: () => "https://www.tabnews.com.br/api/v1/contents?strategy=relevant&per_page=30",
+        map: (d) => d.map((c) => {
+          const page = `https://www.tabnews.com.br/${c.owner_username}/${c.slug}`;
+          return { title: c.title, url: page, date: c.published_at, discussion: page };
+        }) },
+    ];
+
+    // Lixo comum nas listas de alta: modelos sem trava, conteudo adulto, troca de rosto,
+    // cracks e burla de verificacao. As frases de "instalador pronto" sao isca de malware:
+    // software pago "pre-ativado" num repositorio novo com estrelas compradas.
+    const JUNK = /\b(uncensored|abliterated|heretic|crack(ed)?|keygen|bypass|cheat|verify|nsfw|hentai|cum|10?eros|nude|undress|porn|not-for-all-audiences|(face|head)[- ]?swap|remove watermark|pre-?activated|pre-?configured|ready[- ]to[- ](run|play)|all features|full feature|standalone (desktop )?setup|installer|trainer|generator|enhancement (suite|toolkit))\b/i;
+
+    // Campanhas de malware compram estrelas em lote: dezenas de repos novos com quase o
+    // mesmo numero de estrelas. Quem cai num grupo assim sai da lista.
+    function starClusters(items, spread = 5, size = 4) {
+      return new Set(items.filter((a) => items.filter((b) => Math.abs(a.stars - b.stars) <= spread).length > size).map((item) => item.url));
+    }
+
+    const PROJECT_SOURCES = [
+      { id: "spaces", name: "HF Spaces", url: () => "https://huggingface.co/api/spaces?sort=trendingScore&limit=40&expand[]=cardData&expand[]=likes&expand[]=sdk&expand[]=tags",
+        map: (list) => list.map((space) => ({
+          title: space.cardData?.title || space.id.split("/")[1],
+          desc: space.cardData?.short_description || "",
+          url: `https://huggingface.co/spaces/${space.id}`,
+          stars: space.likes,
+          tags: [space.sdk, ...(space.tags || []).filter((name) => name === "not-for-all-audiences")].filter(Boolean),
+        })) },
+      // Modelos nao tem descricao na listagem: o tipo (pipeline_tag) faz esse papel.
+      { id: "models", name: "HF Models", url: () => "https://huggingface.co/api/models?sort=trendingScore&limit=40&expand[]=likes&expand[]=pipeline_tag",
+        map: (list) => list.map((model) => ({
+          title: model.id,
+          desc: (model.pipeline_tag || "").replace(/-/g, " "),
+          url: `https://huggingface.co/${model.id}`,
+          stars: model.likes,
+          tags: [model.pipeline_tag].filter(Boolean),
+        })) },
+      // O GitHub nao tem API de "trending": o mais perto e buscar repos novos por estrelas.
+      // Sem token sao 10 buscas por minuto, contadas por visitante.
+      { id: "github", name: "GitHub", url: () => `https://api.github.com/search/repositories?q=created:>${isoDay(7)}&sort=stars&order=desc&per_page=50`,
+        map: (d) => {
+          const list = d.items.filter((repo) => repo.description).map((repo) => ({
+            title: repo.full_name,
+            desc: repo.description,
+            url: repo.html_url,
+            stars: repo.stargazers_count,
+            tags: [repo.language?.toLowerCase(), ...(repo.topics || []).slice(0, 2)].filter(Boolean),
+          }));
+          const botted = starClusters(list);
+          return list.filter((repo) => !botted.has(repo.url));
+        } },
+      { id: "showhn", name: "Show HN", url: () => `https://hn.algolia.com/api/v1/search?tags=show_hn&numericFilters=points>50,created_at_i>${unix(7)}&hitsPerPage=30`,
+        map: (d) => d.hits.filter((h) => h.url).map((h) => {
+          const [name, ...rest] = h.title.replace(/^Show HN:\s*/i, "").split(/\s+[–—-]\s+/);
+          return { title: name, desc: rest.join(" – "), url: h.url, stars: h.points, tags: [], discussion: hnDiscussion(h) };
+        }) },
+    ];
+
+    async function collectSource(source, kind) {
+      const response = await fetch(source.url(), { signal: AbortSignal.timeout(15000) });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const raw = source.map(source.xml ? await response.text() : await response.json());
+      return raw
+        .filter((item) => item.title && safeUrl(item.url))
+        .filter((item) => kind !== "projects" || !JUNK.test(`${item.title} ${item.desc} ${item.tags.join(" ")}`))
+        .filter((item) => kind !== "posts" || Date.parse(item.date))
+        .map((item) => ({
+          ...item,
+          id: item.url.replace(/[#?].*$/, "").replace(/\/$/, ""),
+          date: item.date && new Date(item.date).toISOString(),
+          source: source.id,
+          sourceName: source.name,
+          tags: kind === "posts" ? tagsFor(item, source) : item.tags,
+        }));
+    }
+
+    const dedupe = (items) => [...new Map(items.map((item) => [item.id, item])).values()];
+
+    // Mostra na hora o que ficou guardado da ultima visita e, em paralelo, busca ao vivo.
+    // Fonte que falha nao some: fica a ultima versao boa dela.
+    async function liveList({ kind, sources, keepDays, show, stateNode, errorKey, anchor }) {
+      let scrolled = false;
+      const paint = (data) => {
+        stateNode.textContent = "";
+        show(data);
+        // Link direto para a secao: a lista so existe agora, entao o browser parou no lugar errado.
+        if (!scrolled && location.hash === `#${anchor}`) $(anchor).scrollIntoView({ behavior: "instant" });
+        scrolled = true;
+      };
+      const cached = await store.get(kind);
+      if (cached?.items?.length) paint(cached);
+
+      const old = cached?.items ?? [];
+      const results = await Promise.allSettled(sources.map((source) => collectSource(source, kind)));
+      const report = {};
+      let items = [];
+      results.forEach((result, i) => {
+        const { id } = sources[i];
+        if (result.status === "fulfilled") {
+          report[id] = result.value.length;
+          items.push(...result.value);
+        } else {
+          report[id] = `falhou: ${result.reason?.message}`;
+          items.push(...old.filter((item) => item.source === id));
+        }
+      });
+      if (keepDays) {
+        // Leituras acumulam entre visitas, mas so os ultimos dias.
+        const since = Date.now() - keepDays * DAY;
+        items = dedupe([...items, ...old])
+          .filter((item) => Date.parse(item.date) >= since)
+          .sort((a, b) => b.date.localeCompare(a.date));
+      } else {
+        items = dedupe(items);
+      }
+      if (!items.length) {
+        if (!old.length) stateNode.textContent = t(errorKey);
+        return;
+      }
+      const data = { updated: new Date().toISOString(), sources: report, items };
+      paint(data);
+      store.set(kind, data);
+    }
+
+    let reads = { items: [], sources: {} };
+    let tag = "all";
+
+    const safeUrl = (url) => (/^https?:\/\//i.test(url || "") ? url : null);
+    const clock = (date) => date.toLocaleTimeString(lang() === "pt" ? "pt-BR" : "en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+
+    function dayLabel(date) {
+      const day = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      const diff = Math.round((day(new Date()) - day(date)) / 86400000);
+      if (diff === 0) return t("reads.today");
+      if (diff === 1) return t("reads.yesterday");
+      return date.toLocaleDateString(lang() === "pt" ? "pt-BR" : "en-US", { weekday: "long", day: "2-digit", month: "short" });
+    }
+
+    function readRow(item) {
+      const row = el("article", "read");
+      const date = new Date(item.date);
+      const time = el("time", "", clock(date));
+      time.dateTime = item.date;
+      const body = el("div");
+      const link = el("a", "read-title", item.title);
+      link.href = safeUrl(item.url);
+      link.rel = "noopener";
+      const meta = el("div", "read-meta");
+      meta.append(el("span", "", item.sourceName));
+      for (const name of item.tags) meta.append(el("span", "tag", name));
+      if (safeUrl(item.discussion)) {
+        const discussion = el("a", "", t("reads.discussion"));
+        discussion.href = item.discussion;
+        discussion.rel = "noopener";
+        meta.append(discussion);
+      }
+      body.append(link, meta);
+      row.append(time, body);
+      return row;
+    }
+
+    function renderFilters() {
+      const counts = {};
+      for (const item of reads.items) for (const name of item.tags) counts[name] = (counts[name] || 0) + 1;
+      const options = [["all", t("reads.all"), reads.items.length], ...Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([name, n]) => [name, `#${name}`, n])];
+      $("tag-filters").replaceChildren(
+        ...options.map(([value, label, n]) => {
+          const button = el("button", `filter${value === tag ? " is-active" : ""}`, `${label} ${n}`);
+          button.type = "button";
+          button.addEventListener("click", () => {
+            tag = value;
+            render();
+          });
+          return button;
+        }),
+      );
+    }
+
+    function render() {
+      $("ask-input").placeholder = t("reads.ask");
+      const ok = Object.values(reads.sources).filter((n) => typeof n === "number" && n > 0).length;
+      $("reads-tag").textContent = `${reads.items.length} ${t("reads.items")} · ${ok} ${t("reads.sources")}`;
+      $("reads-count").textContent = reads.items.length || "";
+      if (reads.updated) $("reads-updated").textContent = `${t("reads.updated")} ${clock(new Date(reads.updated))}`;
+      renderFilters();
+
+      const nodes = [];
+      let current = "";
+      for (const item of reads.items) {
+        if (tag !== "all" && !item.tags.includes(tag)) continue;
+        if (!safeUrl(item.url)) continue;
+        const label = dayLabel(new Date(item.date));
+        if (label !== current) {
+          current = label;
+          nodes.push(el("h3", "day", label));
+        }
+        nodes.push(readRow(item));
+      }
+      $("reads").replaceChildren(...nodes);
+    }
+
+    function loadReads() {
+      return liveList({ kind: "posts", sources: POST_SOURCES, keepDays: 4, stateNode: $("reads-state"), errorKey: "reads.error", anchor: "interesting-posts",
+        show: (data) => {
+          reads = data;
+          render();
+        } });
+    }
+
+    // ---------- modelinho
+    // Um so modelo para as duas secoes: baixa uma vez e cada secao guarda os vetores da sua lista.
+    let extractor;
+    let loadingModel;
+
+    async function vectors(texts) {
+      const out = [];
+      for (let i = 0; i < texts.length; i += 32) {
+        out.push(...(await extractor(texts.slice(i, i + 32), { pooling: "mean", normalize: true })).tolist());
+      }
+      return out;
+    }
+
+    function loadModel(state) {
+      loadingModel ??= (async () => {
+        const files = new Map();
+        const { pipeline } = await import(AI_LIB);
+        extractor = await pipeline("feature-extraction", MODEL, {
+          device: "wasm",
+          dtype: "q8",
+          progress_callback: (progress) => {
+            if (progress.status !== "progress" || !progress.total) return;
+            files.set(progress.file, [progress.loaded, progress.total]);
+            const [loaded, total] = [...files.values()].reduce((sum, file) => [sum[0] + file[0], sum[1] + file[1]], [0, 0]);
+            state(`${t("reads.loading")}… ${Math.round((loaded / total) * 100)}%`);
+          },
+        });
+      })().catch((error) => {
+        loadingModel = undefined;
+        throw error;
+      });
+      return loadingModel;
+    }
+
+    const cosine = (a, b) => a.reduce((sum, value, i) => sum + value * b[i], 0);
+
+    // Liga o botao grande, o campo livre e o card de escolha de uma secao.
+    // root: a <section>. items(): a lista atual. text(item): o que o modelo compara.
+    // interest: [frase em ingles, motivo pt, motivo en]. meta(item): a linha de cima do card.
+    function curator({ root, items, text, interest, meta, seenKey }) {
+      const find = (selector) => root.querySelector(selector);
+      const state = (value) => {
+        find(".lucky-state").textContent = value;
+      };
+      let listVectors;
+      let vectorsFor;
+      let busy = false;
+      let lastQuery = "";
+
+      // O que ja saiu no sorteio fica no banco local: nao repete nem em outra visita.
+      const seenIds = async () => new Set((await store.get(seenKey)) ?? []);
+
+      async function remember(id) {
+        store.set(seenKey, [...(await seenIds()), id].slice(-300));
+      }
+
+      // Vetores de cada item tambem ficam guardados: o modelinho so le o que e novo.
+      async function vectorsOf(list) {
+        const vectorKey = `vectors:${MODEL}:${seenKey}`;
+        const known = (await store.get(vectorKey)) ?? {};
+        const missing = list.filter((item) => !known[item.id]);
+        if (missing.length) {
+          state(`${t("reads.reading")}…`);
+          (await vectors(missing.map(text))).forEach((vector, i) => {
+            known[missing[i].id] = vector;
+          });
+        }
+        const current = Object.fromEntries(list.map((item) => [item.id, known[item.id]]));
+        store.set(vectorKey, current);
+        return list.map((item) => current[item.id]);
+      }
+
+      function setBusy(value) {
+        busy = value;
+        root.querySelectorAll(".lucky-button, .ask button, .pick button").forEach((button) => {
+          button.disabled = value;
+        });
+      }
+
+      async function choose(query) {
+        const list = items();
+        if (busy || !list.length) return;
+        setBusy(true);
+        try {
+          await loadModel(state);
+          if (vectorsFor !== list) {
+            listVectors = await vectorsOf(list);
+            vectorsFor = list;
+          }
+          state(t("reads.ready"));
+          const asked = Boolean(query);
+          const queryVectors = await vectors(asked ? [query] : interest.map(([phrase]) => phrase));
+          const seen = await seenIds();
+          const ranked = list
+            .map((item, i) => {
+              const scores = queryVectors.map((qv) => cosine(listVectors[i], qv));
+              const best = Math.max(...scores);
+              return { item, score: best, reason: scores.indexOf(best) };
+            })
+            .filter(({ item }) => safeUrl(item.url))
+            .sort((a, b) => b.score - a.score);
+          const fresh = ranked.filter(({ item }) => !seen.has(item.id));
+          const pool = (fresh.length ? fresh : ranked).slice(0, asked ? 5 : POOL);
+          // Sorteio com peso: as mais proximas do pedido saem mais, mas nao sempre.
+          const weights = pool.map(({ score }) => Math.max(score, 0.01) ** 4);
+          let roll = Math.random() * weights.reduce((a, b) => a + b, 0);
+          const picked = pool.find((_, i) => (roll -= weights[i]) <= 0) ?? pool[0];
+          remember(picked.item.id);
+          showPick(picked, asked);
+        } catch (error) {
+          console.error(error);
+          state(t("reads.aiError"));
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      function showPick({ item, reason }, asked) {
+        const box = find(".pick");
+        const why = asked ? t("reads.asked") : `${t("reads.why")}: ${interest[reason][lang() === "pt" ? 1 : 2]}`;
+        const actions = el("div", "pick-actions");
+        const open = el("a", "", t("reads.open"));
+        open.href = safeUrl(item.url);
+        open.rel = "noopener";
+        open.target = "_blank";
+        const another = el("button", "", t("reads.another"));
+        another.type = "button";
+        another.addEventListener("click", () => choose(lastQuery));
+        actions.append(open, another);
+        const nodes = [el("div", "pick-meta", `${meta(item)} · ${why}`), el("h3", "", item.title)];
+        if (item.desc) nodes.push(el("p", "pick-desc", item.desc));
+        box.replaceChildren(...nodes, actions);
+        box.hidden = false;
+        open.focus({ preventScroll: true });
+      }
+
+      find(".lucky-button").addEventListener("click", () => {
+        lastQuery = "";
+        choose("");
+      });
+      find(".ask").addEventListener("submit", (event) => {
+        event.preventDefault();
+        lastQuery = find(".ask input").value.trim().slice(0, 300);
+        choose(lastQuery);
+      });
+    }
+
+    curator({
+      root: $("interesting-posts"),
+      items: () => reads.items,
+      text: (item) => item.title,
+      interest: INTEREST,
+      meta: (item) => `${item.sourceName} · ${dayLabel(new Date(item.date))} ${clock(new Date(item.date))}`,
+      seenKey: "reads-seen",
+    });
+
+    // ---------- interesting projects
+    // Projetos em alta buscados ao vivo: HF Spaces, HF Models, GitHub e Show HN.
+    const PROJECT_INTEREST = [
+      ["a useful open source tool I could run today", "ferramenta útil pra rodar hoje", "useful tool to run today"],
+      ["AI running locally or in the browser, on device, WebGPU", "IA local ou no browser", "local or in-browser AI"],
+      ["a game engine, emulator, recompilation or creative hack", "engine, emulador ou hack criativo", "engine, emulator or creative hack"],
+      ["a security or privacy tool", "segurança e privacidade", "security and privacy"],
+      ["an impressive visual demo: 3D, video, graphics", "demo visual impressionante", "impressive visual demo"],
+      ["a clear guide or leaderboard that explains how something works", "guia ou comparativo que explica", "guide or comparison that explains"],
+    ];
+    let projects = { items: [], sources: {} };
+    let projectSource = "all";
+
+    const shortCount = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n ?? 0));
+    const PROJECT_MARKS = { github: "★", showhn: "▲" };
+    const projectMark = (item) => `${PROJECT_MARKS[item.source] ?? "♥"} ${shortCount(item.stars)}`;
+
+    function projectRow(item) {
+      const row = el("article", "read");
+      const body = el("div");
+      const link = el("a", "read-title", item.title);
+      link.href = safeUrl(item.url);
+      link.rel = "noopener";
+      body.append(link);
+      if (item.desc && item.source !== "models") body.append(el("p", "read-desc", item.desc));
+      const meta = el("div", "read-meta");
+      meta.append(el("span", "", item.sourceName));
+      for (const name of item.tags) meta.append(el("span", "tag", name));
+      body.append(meta);
+      row.append(el("span", "stars", projectMark(item)), body);
+      return row;
+    }
+
+    function renderProjects() {
+      $("iproj-input").placeholder = t("proj.ask");
+      const names = Object.fromEntries(projects.items.map((item) => [item.source, item.sourceName]));
+      const counts = {};
+      for (const item of projects.items) counts[item.source] = (counts[item.source] || 0) + 1;
+      $("iproj-tag").textContent = `${projects.items.length} ${t("proj.items")}`;
+      $("iproj-count").textContent = projects.items.length || "";
+      if (projects.updated) $("iproj-updated").textContent = `${t("reads.updated")} ${clock(new Date(projects.updated))}`;
+
+      const options = [["all", t("reads.all"), projects.items.length], ...Object.entries(counts).map(([id, n]) => [id, names[id], n])];
+      $("iproj-filters").replaceChildren(
+        ...options.map(([value, label, n]) => {
+          const button = el("button", `filter${value === projectSource ? " is-active" : ""}`, `${label} ${n}`);
+          button.type = "button";
+          button.addEventListener("click", () => {
+            projectSource = value;
+            renderProjects();
+          });
+          return button;
+        }),
+      );
+
+      const nodes = [];
+      let current = "";
+      for (const item of projects.items) {
+        if (projectSource !== "all" && item.source !== projectSource) continue;
+        if (!safeUrl(item.url)) continue;
+        if (item.sourceName !== current) {
+          current = item.sourceName;
+          nodes.push(el("h3", "day", current));
+        }
+        nodes.push(projectRow(item));
+      }
+      $("iproj-list").replaceChildren(...nodes);
+    }
+
+    function loadProjects() {
+      return liveList({ kind: "projects", sources: PROJECT_SOURCES, stateNode: $("iproj-state"), errorKey: "proj.error", anchor: "interesting-projects",
+        show: (data) => {
+          projects = data;
+          renderProjects();
+        } });
+    }
+
+    curator({
+      root: $("interesting-projects"),
+      items: () => projects.items,
+      text: (item) => `${item.title}. ${item.desc}`,
+      interest: PROJECT_INTEREST,
+      meta: (item) => `${item.sourceName} · ${projectMark(item)}`,
+      seenKey: "projects-seen",
+    });
+
+    // ---------- radio
+    // SomaFM: radio sem anuncio, mantida por doacao. O stream sai dos .pls oficiais.
+    const STATIONS = [
+      ["defcon", "DEF CON Radio"],
+      ["groovesalad", "Groove Salad"],
+      ["dronezone", "Drone Zone"],
+      ["deepspaceone", "Deep Space One"],
+      ["vaporwaves", "Vaporwaves"],
+    ];
+    const audio = new Audio();
+    audio.preload = "none";
+    let station = 0;
+    let channels;
+    let nowTimer;
+
+    try {
+      station = Math.min(STATIONS.length - 1, Math.max(0, Number(localStorage.getItem("radio-station")) || 0));
+    } catch {
+      station = 0;
+    }
+
+    const playing = () => !audio.paused;
+
+    let radioNote = "";
+
+    function paintRadio(now = radioNote) {
+      const [, name] = STATIONS[station];
+      $("radio-now").textContent = now ? `${name} · ${now}` : name;
+      $("radio-play").textContent = playing() ? "❚❚" : "▶";
+      $("radio-play").setAttribute("aria-label", playing() ? t("radio.pause") : t("radio.play"));
+    }
+
+    async function streamFor(id) {
+      channels ??= fetch("https://somafm.com/channels.json").then((r) => r.json());
+      const channel = (await channels).channels.find((c) => c.id === id);
+      const playlist = channel.playlists.find((p) => p.format === "mp3") ?? channel.playlists[0];
+      const pls = await (await fetch(playlist.url)).text();
+      return pls.match(/^File1=(.+)$/m)[1].trim();
+    }
+
+    async function nowPlaying() {
+      try {
+        const data = await (await fetch(`https://somafm.com/songs/${STATIONS[station][0]}.json`)).json();
+        const song = data.songs[0];
+        paintRadio(song ? `${song.artist} — ${song.title}` : "");
+      } catch {
+        paintRadio();
+      }
+    }
+
+    // Stream fora do ar ou bloqueado: para o player e avisa em vez de fingir que toca.
+    function failRadio(error) {
+      console.error(error);
+      audio.pause();
+      clearInterval(nowTimer);
+      radioNote = t("radio.error");
+      paintRadio();
+    }
+
+    async function start() {
+      radioNote = "";
+      $("radio-now").textContent = `${STATIONS[station][1]} · …`;
+      audio.src = await streamFor(STATIONS[station][0]);
+      await audio.play();
+      nowPlaying();
+      clearInterval(nowTimer);
+      nowTimer = setInterval(nowPlaying, 30000);
+    }
+
+    $("radio-play").addEventListener("click", async () => {
+      if (playing()) {
+        audio.pause();
+        clearInterval(nowTimer);
+        paintRadio();
+        return;
+      }
+      try {
+        await start();
+      } catch (error) {
+        failRadio(error);
+      }
+    });
+
+    $("radio-next").addEventListener("click", async () => {
+      station = (station + 1) % STATIONS.length;
+      try {
+        localStorage.setItem("radio-station", String(station));
+      } catch {
+        // Sem storage a estacao so nao fica lembrada.
+      }
+      if (playing()) await start().catch(failRadio);
+      else paintRadio();
+    });
+
+    // ---------- leitores online
+    // Ficou interessado, né? É mais fácil só compartilhar o link com um amigo.
+    // (Não tem servidor nem memória: este número é inventado aqui mesmo, no seu browser.)
+    let readers = 4 + Math.floor(Math.random() * 9);
+    function paintOnline() {
+      $("online").textContent = `${readers} ${t("online")}`;
+    }
+    setInterval(() => {
+      readers = Math.min(23, Math.max(3, readers + Math.round(Math.random() * 2 - 1)));
+      paintOnline();
+    }, 20000);
+    paintOnline();
+
+    // ---------- limpe suas botas
+    // So o que o browser ja entrega a qualquer site. Nada disso e enviado: tudo fica aqui.
+    // Cookies de outros sites o browser nao mostra pra ninguem, entao nao fingimos ler.
+    const fill = (text, values) => text.replace(/\{(\w+)\}/g, (_, key) => values[key]);
+    let country = "";
+    let blocked = false;
+
+    function card() {
+      const ua = navigator.userAgent;
+      const os = navigator.userAgentData?.platform || (/Mac/.test(ua) ? "macOS" : /Windows/.test(ua) ? "Windows" : /Android/.test(ua) ? "Android" : /iPhone|iPad/.test(ua) ? "iOS" : /Linux/.test(ua) ? "Linux" : "");
+      let gpu = "";
+      try {
+        const gl = document.createElement("canvas").getContext("webgl");
+        const info = gl?.getExtension("WEBGL_debug_renderer_info");
+        gpu = info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : "";
+      } catch {
+        gpu = "";
+      }
+      const parts = [
+        country,
+        os,
+        `${screen.width}×${screen.height}`,
+        // "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, ...)" vira "Apple M4".
+        gpu.replace(/^ANGLE \((.+)\)$/, "$1").split(", ").slice(0, 2).pop()?.replace(/^.*Renderer: /, "").replace(/ Direct3D.*$/, "").trim(),
+        navigator.hardwareConcurrency && `${navigator.hardwareConcurrency} ${t("boots.cores")}`,
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+        navigator.language,
+      ];
+      return parts.filter(Boolean).join(" · ");
+    }
+
+    function storedItems() {
+      try {
+        return localStorage.length + sessionStorage.length;
+      } catch {
+        return 0;
+      }
+    }
+
+    function thirdPartyBlocked() {
+      const ua = navigator.userAgent;
+      // Palpite pelo browser: Safari, Firefox e Brave bloqueiam por padrao; Chrome e Edge nao.
+      return Boolean(navigator.brave) || /Firefox\//.test(ua) || (/Safari\//.test(ua) && !/Chrome|Chromium|Edg\//.test(ua));
+    }
+
+    async function wipe() {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch {
+        // Sem storage nao tem o que apagar.
+      }
+      if (window.caches) for (const key of await caches.keys()) await caches.delete(key);
+      await store.clear();
+      paintBoots();
+    }
+
+    function bootRow(dirty, label, value, why) {
+      const row = el("li", `boot ${dirty ? "is-dirty" : "is-clean"}`);
+      const whyNode = el("span", "why");
+      whyNode.append(...[why].flat().filter(Boolean));
+      row.append(el("span", "mark", dirty ? "✗" : "✓"), el("span", "k", label), el("span", "v", value), whyNode);
+      return row;
+    }
+
+    function outLink(text, href) {
+      const link = el("a", "", `${text} →`);
+      link.href = href;
+      link.rel = "noopener";
+      return link;
+    }
+
+    function paintBoots() {
+      const referrer = document.referrer && !document.referrer.startsWith(location.origin) ? document.referrer.replace(/^https?:\/\//, "").slice(0, 48) : "";
+      const privacySignal = navigator.globalPrivacyControl === true || navigator.doNotTrack === "1";
+      const thirdOff = thirdPartyBlocked();
+      const cookies = document.cookie ? document.cookie.split(";").length : 0;
+      const wipeButton = el("button", "", t("boots.wipe"));
+      wipeButton.type = "button";
+      wipeButton.addEventListener("click", wipe);
+
+      const rows = [
+        bootRow(Boolean(referrer), t("boots.referrer"), referrer || "—", referrer ? t("boots.referrerWhy") : t("boots.referrerNone")),
+        bootRow(history.length > 1, t("boots.history"), fill(t("boots.historyValue"), { n: history.length }), t("boots.historyWhy")),
+        bootRow(!blocked, t("boots.blocker"), blocked ? t("boots.blockerOn") : t("boots.blockerOff"), blocked ? "" : [t("boots.blockerWhy"), " ", outLink("uBlock Origin", "https://ublockorigin.com")]),
+        bootRow(!privacySignal, t("boots.gpc"), privacySignal ? t("boots.gpcOn") : t("boots.gpcOff"), privacySignal ? "" : [t("boots.gpcWhy"), " ", outLink("Privacy Badger", "https://privacybadger.org")]),
+        bootRow(!thirdOff, t("boots.third"), thirdOff ? t("boots.thirdOff") : t("boots.thirdOn"), thirdOff ? "" : t("boots.thirdWhy")),
+        bootRow(true, t("boots.card"), card(), t("boots.cardWhy")),
+      ];
+      const site = bootRow(false, t("boots.site"), fill(t("boots.siteValue"), { c: cookies, s: storedItems() }), wipeButton);
+      $("boots-list").replaceChildren(...rows, site);
+
+      const crumbs = rows.filter((row) => row.classList.contains("is-dirty")).length;
+      $("boots-count").textContent = crumbs ? `· ${crumbs} ${t("boots.crumbs")}` : `· ${t("boots.clean")}`;
+
+      // O modelinho fica no Cache Storage: mostra o tamanho quando o browser conta.
+      navigator.storage?.estimate?.().then(({ usage }) => {
+        if (usage > 1e6) site.querySelector(".v").textContent += ` · ${Math.round(usage / 1e6)} MB`;
+      });
+    }
+
+    function detectBlocker() {
+      // Isca: bloqueadores escondem elementos com essas classes.
+      const bait = el("div", "adsbox ad-banner pub_300x250 sponsored-ad", " ");
+      bait.style.cssText = "position:absolute;left:-9999px;height:10px;width:10px";
+      document.body.append(bait);
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(bait.offsetHeight === 0 || getComputedStyle(bait).display === "none");
+          bait.remove();
+        }, 200);
+      });
+    }
+
+    async function loadBoots() {
+      paintBoots();
+      blocked = await detectBlocker();
+      try {
+        // Trace do proprio Cloudflare do site: o pais que o IP entrega. Fora do Cloudflare da 404.
+        const trace = await (await fetch("/cdn-cgi/trace")).text();
+        country = trace.match(/^loc=([A-Z]{2})$/m)?.[1] ?? "";
+      } catch {
+        country = "";
+      }
+      paintBoots();
+    }
+
+    audio.addEventListener("pause", () => paintRadio());
+    document.addEventListener("site-lang", () => {
+      render();
+      paintRadio();
+      paintOnline();
+      paintBoots();
+      renderProjects();
+    });
+    paintRadio();
+    loadReads();
+    loadProjects();
+    loadBoots();
   </script>
 </body>
 

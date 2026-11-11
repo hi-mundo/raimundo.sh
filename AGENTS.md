@@ -1,12 +1,12 @@
 # AGENTS.md do Blog
 
 Este arquivo define como agentes de IA devem escrever, revisar e manter o
-conteudo publico de raimundopessoa.com.
+conteudo publico de raimundo.sh.
 
 ## Identidade
 
-- Nome do site: `raimundopessoa.com`.
-- Assinatura fixa no header: `raimundopessoa.com` e `o burro curioso`.
+- Nome do site: `raimundo.sh`.
+- Assinatura fixa no header: `raimundo.sh` e `o burro curioso`.
 - Posicionamento: blog pessoal, profissional e tecnico de Raimundo Pessoa.
 - O site deve parecer um caderno publico de engenharia, seguranca, operacao,
   IA aplicada, carreira tecnica e observacao cultural quando ela ajuda a
@@ -83,7 +83,7 @@ Frederico Creize e a persona editorial recorrente do blog.
   devem competir com o texto.
 - Durante ajustes visuais, tirar screenshots no navegador para comparar a tela
   real antes de concluir.
-- O primeiro viewport deve deixar claro que o site e `raimundopessoa.com`.
+- O primeiro viewport deve deixar claro que o site e `raimundo.sh`.
 - A navegacao deve ser discreta: posts, sobre, prompts, AGENTS.md e metalinks.
 
 ## Conteudo
