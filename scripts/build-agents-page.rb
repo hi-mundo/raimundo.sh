@@ -80,8 +80,8 @@ page = <<~HTML
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AGENTS.md - raimundopessoa.com</title>
-    <meta name="description" content="Contrato editorial publico de raimundopessoa.com para orientar linguagem, visual e manutencao por agentes de IA." />
+    <title>AGENTS.md - raimundo.sh</title>
+    <meta name="description" content="Contrato editorial publico de raimundo.sh para orientar linguagem, visual e manutencao por agentes de IA." />
     <style>
       :root {
         color-scheme: light dark;
@@ -227,7 +227,7 @@ page = <<~HTML
   <body>
     <header>
       <div class="brand">
-        <a href="./">raimundopessoa.com</a>
+        <a href="./">raimundo.sh</a>
         <span class="tagline">o burro curioso</span>
       </div>
     </header>

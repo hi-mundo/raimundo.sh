@@ -6,7 +6,7 @@ require "json"
 
 ROOT = File.expand_path("..", __dir__)
 OLD_REPO = File.expand_path("../../ODISSEIADOPUTO/odisseiadoputo", __dir__)
-SITE_HOST = "https://raimundopessoa.com"
+SITE_HOST = "https://raimundo.sh"
 MANIFEST = File.join(ROOT, "posts", "legado", "manifest.json")
 
 def redirect_html(target)

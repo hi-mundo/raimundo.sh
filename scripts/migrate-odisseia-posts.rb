@@ -12,7 +12,7 @@ ROOT = File.expand_path("..", __dir__)
 OLD_REPO = File.expand_path("../../ODISSEIADOPUTO/odisseiadoputo", __dir__)
 POST_OUT = File.join(ROOT, "posts", "legado")
 ASSET_OUT = File.join(ROOT, "assets", "legado", "img")
-SITE_HOST = "https://raimundopessoa.com"
+SITE_HOST = "https://raimundo.sh"
 
 def git_old(*args)
   out, err, status = Open3.capture3("git", "-C", OLD_REPO, *args)
@@ -134,7 +134,7 @@ def page_template(title:, subtitle:, date:, categories:, body:)
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>#{html_escape(title)} - raimundopessoa.com</title>
+      <title>#{html_escape(title)} - raimundo.sh</title>
       <style>
         :root{color-scheme:light dark;--bg:#f6f1e8;--text:#1f1a14;--muted:#706659;--faint:#988d7e;--line:rgba(57,45,31,.16);--link:#684513}
         @media (prefers-color-scheme:dark){:root{--bg:#14110e;--text:#efe7db;--muted:#b8ab99;--faint:#8c806f;--line:rgba(239,231,219,.14);--link:#e3c07a}}
@@ -152,7 +152,7 @@ def page_template(title:, subtitle:, date:, categories:, body:)
     </head>
     <body>
       <main>
-        <a class="back" href="../../">← raimundopessoa.com</a>
+        <a class="back" href="../../">← raimundo.sh</a>
         <article>
           <p class="meta">legado do odisseiadoputo · #{html_escape(date)}#{categories.empty? ? "" : " · #{html_escape(categories.join(" · "))}"}</p>
           <h1>#{html_escape(title)}</h1>
