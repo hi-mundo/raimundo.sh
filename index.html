@@ -4,54 +4,136 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>raimundo.sh - o burro curioso</title>
-  <meta name="description" content="Textos, ideias e notas tecnicas de Raimundo Pessoa." />
+  <title>raimundo.sh · saferoom</title>
+  <meta name="description" content="A saferoom: uma parada interplanetária no shell para ler algo interessante, ouvir rádio e ficar à vontade. Tudo roda no seu navegador." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet" />
 
   <style>
+    /* Saferoom: uma parada interplanetaria no shell. Tudo cabe numa tela; a pagina nunca
+       rola, so o conteudo de cada painel. Abaixo de 820px a sala vira uma coluna que rola
+       por dentro, ainda sem rolar a pagina. */
     :root {
       color-scheme: dark;
-      --bg: #000;
-      --surface: #0c0c0d;
-      --text: #ece6dc;
-      --muted: #a39d93;
-      --faint: #8a857d;
-      --line: rgba(236, 230, 220, 0.13);
-      --link: #e3c07a;
-      --accent: #e3c07a;
+      --bg: #070b14;
+      --surface: rgba(13, 20, 36, 0.78);
+      --surface-solid: #0d1424;
+      --text: #ebe5d8;
+      --muted: #a9b1c0;
+      --faint: #7f899b;
+      --line: rgba(94, 230, 255, 0.14);
+      --line-strong: rgba(94, 230, 255, 0.34);
+      --accent: #ffb45e;
+      --accent-ink: #1c1000;
+      --link: #ffc985;
+      --glow: #5ee6ff;
+      --grid: rgba(94, 230, 255, 0.28);
+      --sky: rgba(94, 230, 255, 0.1);
+      --ok: #7fdba0;
+      --radius: 12px;
       --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --display: "Space Grotesk", var(--mono);
+    }
+
+    /* Cadeiras: cada uma muda a luz da sala. */
+    body[data-chair="window"] {
+      --glow: #9bb6ff;
+      --grid: rgba(155, 182, 255, 0.24);
+      --sky: rgba(155, 182, 255, 0.14);
+    }
+
+    body[data-chair="fireplace"] {
+      --glow: #ff9a5e;
+      --grid: rgba(255, 154, 94, 0.22);
+      --sky: rgba(255, 154, 94, 0.12);
+      --line: rgba(255, 180, 120, 0.15);
+      --line-strong: rgba(255, 180, 120, 0.36);
     }
 
     * {
       box-sizing: border-box;
     }
 
-    html {
-      scroll-padding-top: 76px;
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      html {
-        scroll-behavior: smooth;
-      }
+    html,
+    body {
+      height: 100%;
     }
 
     body {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      height: 100dvh;
       margin: 0;
-      padding-bottom: 34px;
-      background: var(--bg);
+      overflow: hidden;
+      background:
+        radial-gradient(120% 60% at 50% 110%, var(--sky), transparent 60%),
+        radial-gradient(60% 40% at 12% -10%, rgba(255, 180, 94, 0.08), transparent 70%),
+        var(--bg);
       color: var(--text);
       font-family: var(--mono);
       font-size: 14px;
       line-height: 1.5;
+      transition: background-color 400ms ease;
+    }
+
+    /* Ceu: estrelas paradas, desenhadas so com gradiente. */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image:
+        radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.55), transparent 60%),
+        radial-gradient(1px 1px at 68% 9%, rgba(255, 255, 255, 0.4), transparent 60%),
+        radial-gradient(1.5px 1.5px at 84% 31%, rgba(255, 255, 255, 0.5), transparent 60%),
+        radial-gradient(1px 1px at 35% 42%, rgba(255, 255, 255, 0.3), transparent 60%),
+        radial-gradient(1px 1px at 52% 24%, rgba(255, 255, 255, 0.35), transparent 60%),
+        radial-gradient(1.5px 1.5px at 22% 63%, rgba(255, 255, 255, 0.25), transparent 60%),
+        radial-gradient(1px 1px at 91% 58%, rgba(255, 255, 255, 0.3), transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Chao em grade, em perspectiva, sumindo no horizonte. */
+    .floor {
+      position: fixed;
+      right: -50%;
+      bottom: -12vh;
+      left: -50%;
+      z-index: -1;
+      height: 58vh;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 64px 64px;
+      opacity: 0.55;
+      transform: perspective(420px) rotateX(62deg);
+      transform-origin: 50% 100%;
+      -webkit-mask-image: linear-gradient(to top, #000 5%, transparent 80%);
+      mask-image: linear-gradient(to top, #000 5%, transparent 80%);
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .floor {
+        animation: drift 14s linear infinite;
+      }
+
+      body.is-playing .floor {
+        animation-duration: 6s;
+      }
+    }
+
+    @keyframes drift {
+      to {
+        background-position: 0 64px;
+      }
     }
 
     ::selection {
       background: var(--accent);
-      color: #000;
+      color: var(--accent-ink);
     }
 
     :focus-visible {
@@ -70,8 +152,10 @@
     h1,
     h2,
     h3,
+    h4,
     p,
-    figure {
+    figure,
+    fieldset {
       margin: 0;
     }
 
@@ -80,7 +164,6 @@
       font-weight: 600;
     }
 
-    /* O resumo sai da tela e aparece na status bar, sem sumir para leitor de tela. */
     .hint {
       position: absolute;
       width: 1px;
@@ -90,18 +173,24 @@
       white-space: nowrap;
     }
 
+    .scroll {
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-color: var(--line-strong) transparent;
+      scrollbar-width: thin;
+    }
+
+    /* ---------- topo */
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
       display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
-      gap: 4px 24px;
-      padding: 14px max(24px, calc((100% - 1280px) / 2));
-      background: var(--bg);
+      gap: 12px 24px;
+      padding: 10px 20px;
+      background: rgba(7, 11, 20, 0.6);
       border-bottom: 1px solid var(--line);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
     }
 
     .prompt {
@@ -111,158 +200,244 @@
     }
 
     .prompt b {
-      color: var(--link);
+      color: var(--glow);
       font-weight: 600;
+      text-shadow: 0 0 12px var(--glow);
     }
 
     .topbar-right {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       gap: 16px;
       color: var(--faint);
       font-size: 0.86em;
     }
 
     .lang {
-      padding: 0;
-      border: 0;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
       background: none;
       color: var(--muted);
       cursor: pointer;
     }
 
     .lang:hover {
+      border-color: var(--accent);
       color: var(--link);
     }
 
-    .app {
+    /* ---------- sala */
+    .room {
       display: grid;
-      grid-template-columns: 190px minmax(0, 1fr);
-      gap: clamp(32px, 6vw, 88px);
-      width: min(1280px, calc(100% - 48px));
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr) minmax(280px, 340px);
+      grid-template-areas: "lobby reader ai";
+      gap: 16px;
+      width: min(1600px, 100%);
+      min-height: 0;
       margin: 0 auto;
+      padding: 16px 20px;
     }
 
-    .rail {
-      position: sticky;
-      top: 52px;
-      align-self: start;
-      padding: 40px 0;
+    .panel {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 24px 60px -36px var(--glow);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
     }
 
-    .rail a {
-      display: grid;
-      grid-template-columns: 2.2ch minmax(0, 1fr) auto;
-      gap: 0 1ch;
-      margin: 0 -8px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      color: var(--text);
-      text-decoration: none;
+    .label {
+      color: var(--glow);
+      font-size: 0.78em;
+      letter-spacing: 0.04em;
     }
 
-    .rail .dir {
-      display: grid;
-      grid-template-columns: 2.2ch minmax(0, 1fr);
-      gap: 0 1ch;
-      padding: 4px 0;
+    .label::before {
+      content: "▍";
+      margin-right: 4px;
     }
 
-    .rail a.sub {
-      grid-template-columns: 5.2ch minmax(0, 1fr) auto;
+    /* ---------- lobby: boas-vindas, radio, cadeira, botas */
+    .lobby {
+      grid-area: lobby;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+      padding-right: 2px;
     }
 
-    .rail .tree {
-      white-space: pre;
+    .welcome {
+      padding: 18px 18px 16px;
     }
 
-    .rail .root {
-      grid-template-columns: minmax(0, 1fr);
-      color: var(--link);
+    .welcome h1 {
+      margin: 10px 0 10px;
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 2.1vw, 2rem);
       font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
     }
 
-    .tree,
-    .rail .n {
+    .welcome h1 span {
+      display: block;
+    }
+
+    .welcome h1 span + span {
+      color: var(--accent);
+      text-shadow: 0 0 18px rgba(255, 180, 94, 0.35);
+    }
+
+    .lede {
+      color: var(--muted);
+    }
+
+    .safe {
+      margin-top: 12px;
       color: var(--faint);
+      font-size: 0.8em;
     }
 
-    .rail a[aria-current="true"],
-    .rail a:focus-visible {
-      --text: #000;
-      --faint: #000;
-      --link: #000;
-      background: var(--accent);
+    .safe::before {
+      content: "● ";
+      color: var(--ok);
     }
 
-    .pane {
-      min-width: 0;
-      padding-bottom: 72px;
-    }
-
-    .fetch {
-      display: grid;
-      grid-template-columns: 152px minmax(0, 1fr);
-      align-items: end;
-      gap: clamp(24px, 4vw, 48px);
-      padding: 56px 0 24px;
+    .dog {
+      float: right;
+      margin: 0 0 6px 10px;
+      text-align: center;
     }
 
     .dog img {
       display: block;
-      width: 152px;
-      height: 196px;
+      width: 58px;
+      height: 76px;
       object-fit: cover;
       border-radius: 8px;
+      outline: 1px solid var(--line);
     }
 
-    .fetch figcaption {
-      margin-top: 8px;
+    .dog figcaption {
+      margin-top: 4px;
       color: var(--faint);
-      font-size: 0.74em;
+      font-size: 0.62em;
+      line-height: 1.2;
     }
 
-    h1 {
-      font-size: clamp(1.7rem, 3.5vw, 2.7rem);
-      font-weight: 600;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
+    .radio-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
     }
 
-    h1 span {
-      display: block;
+    .radio-card .radio-play {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--accent-ink);
+      cursor: pointer;
+      font-size: 1.05em;
+      box-shadow: 0 0 0 0 rgba(255, 180, 94, 0.5);
     }
 
-    h1 span + span {
-      color: var(--faint);
-      font-weight: 400;
+    body.is-playing .radio-card .radio-play {
+      box-shadow: 0 0 22px rgba(255, 180, 94, 0.55);
     }
 
-    .socials {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 24px;
+    .radio-card .now {
+      display: grid;
+      min-width: 0;
     }
 
-    .socials a {
-      padding: 5px 12px;
+    .radio-card [data-radio-now] {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .radio-card .radio-next {
+      padding: 4px 10px;
       border: 1px solid var(--line);
-      border-radius: 6px;
+      border-radius: 8px;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .radio-card .radio-next:hover {
+      border-color: var(--accent);
+      color: var(--link);
+    }
+
+    .chairs {
+      padding: 12px 14px 14px;
+      border: 1px solid var(--line);
+    }
+
+    .chairs legend {
+      float: left;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 0;
+    }
+
+    .chair-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      clear: both;
+    }
+
+    .chair {
+      display: grid;
+      justify-items: center;
+      gap: 2px;
+      padding: 10px 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.82em;
+    }
+
+    .chair b {
       color: var(--text);
-      text-decoration: none;
+      font-size: 1.5em;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .chair:hover {
+      border-color: var(--line-strong);
+      color: var(--text);
+    }
+
+    .chair[aria-pressed="true"] {
+      border-color: var(--glow);
+      box-shadow: inset 0 0 18px -6px var(--glow);
+      color: var(--text);
     }
 
     .boots {
-      margin-top: 20px;
-      max-width: 640px;
+      padding: 12px 14px;
       color: var(--faint);
       font-size: 0.8em;
     }
 
     .boots summary {
       cursor: pointer;
-      width: fit-content;
     }
 
     .boots summary:hover,
@@ -288,7 +463,7 @@
 
     .boot {
       display: grid;
-      grid-template-columns: 2ch 11ch minmax(0, 1fr);
+      grid-template-columns: 2ch 10ch minmax(0, 1fr);
       column-gap: 8px;
     }
 
@@ -297,7 +472,7 @@
     }
 
     .boot.is-clean .mark {
-      color: #7fbf7f;
+      color: var(--ok);
     }
 
     .boot .v {
@@ -324,171 +499,129 @@
       color: var(--link);
     }
 
-    .box {
-      position: relative;
-      margin-top: 64px;
-      padding: 32px 24px 24px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
+    /* ---------- leitor: abas posts / projects */
+    .reader {
+      grid-area: reader;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
 
-    .box-title,
-    .box-tag {
-      position: absolute;
-      top: 0;
-      padding: 0 10px;
-      background: var(--bg);
-      line-height: 1;
-      transform: translateY(-50%);
-    }
-
-    .box-title {
-      left: 16px;
-      color: var(--link);
-      font-size: 1em;
-      font-weight: 600;
-    }
-
-    .box-tag {
-      right: 16px;
-      color: var(--faint);
-      font-size: 0.8em;
-    }
-
-    .tiles {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
-    }
-
-    .tile {
-      display: block;
-      min-width: 0;
-      color: var(--text);
-      text-decoration: none;
-    }
-
-    .thumb {
-      display: block;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      background: var(--surface);
-      border-radius: 8px;
-      outline: 1px solid var(--line);
-      outline-offset: -1px;
-      transition: outline-color 120ms linear, opacity 120ms linear;
-    }
-
-    .contain {
-      padding: 12%;
-      object-fit: contain;
-    }
-
-    .thumb-text {
-      display: grid;
-      place-items: center;
-      color: var(--link);
-      font-size: clamp(1.3rem, 3vw, 2.2rem);
-      font-weight: 600;
-      letter-spacing: -0.03em;
-    }
-
-    .tile:hover .thumb,
-    .tile:focus-visible .thumb {
-      outline-color: var(--accent);
-    }
-
-    .tile-body {
-      padding-top: 10px;
-    }
-
-    .tile h3 {
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-    }
-
-    .row-meta {
+    .tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: 0 10px;
+      gap: 4px;
+      padding: 8px 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tab {
+      margin-bottom: -1px;
+      padding: 8px 14px;
+      border: 1px solid transparent;
+      border-radius: 8px 8px 0 0;
+      background: none;
+      color: var(--faint);
+      cursor: pointer;
+    }
+
+    .tab:hover {
+      color: var(--text);
+    }
+
+    .tab[aria-selected="true"] {
+      background: var(--surface-solid);
+      border-color: var(--line);
+      border-bottom-color: var(--surface-solid);
+      color: var(--link);
+    }
+
+    .tab .n {
+      margin-left: 6px;
       color: var(--faint);
       font-size: 0.82em;
     }
 
-    .filters {
+    .tabpanel {
       display: flex;
-      flex-wrap: wrap;
-      gap: 2px 16px;
-      margin-bottom: 20px;
-      font-size: 0.86em;
+      flex: 1;
+      flex-direction: column;
+      min-height: 0;
+      padding: 18px 20px 0;
+    }
+
+    .tabpanel[hidden] {
+      display: none;
     }
 
     .lucky {
       display: grid;
       justify-items: center;
-      gap: 14px;
-      margin-bottom: 28px;
-      padding: 12px 0 32px;
-      border-bottom: 1px solid var(--line);
+      gap: 10px;
       text-align: center;
+    }
+
+    .lucky h2 {
+      width: 100%;
+      max-width: 720px;
+      font-size: 1em;
     }
 
     .lucky-button {
       width: 100%;
-      max-width: 680px;
-      padding: 22px 28px;
+      padding: 18px 24px;
       border: 0;
       border-radius: 12px;
-      background: var(--accent);
-      color: #000;
+      background: linear-gradient(180deg, #ffc47c, var(--accent));
+      color: var(--accent-ink);
       cursor: pointer;
-      font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+      font-family: var(--display);
+      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
       font-weight: 600;
       letter-spacing: -0.01em;
+      box-shadow: 0 0 0 1px rgba(255, 180, 94, 0.4), 0 10px 40px -12px rgba(255, 180, 94, 0.6);
+      transition: transform 120ms ease, box-shadow 120ms ease;
     }
 
     .lucky-button:hover {
-      background: #ecd09a;
+      box-shadow: 0 0 0 1px rgba(255, 180, 94, 0.7), 0 10px 48px -8px rgba(255, 180, 94, 0.75);
+      transform: translateY(-1px);
     }
 
     .lucky-button:disabled {
       cursor: progress;
       opacity: 0.6;
-    }
-
-    .lucky-sub {
-      color: var(--muted);
+      transform: none;
     }
 
     .ask {
       display: flex;
       gap: 8px;
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
     }
 
-    .ask input {
+    .ask input,
+    .ai-form input {
       flex: 1;
       min-width: 0;
-      padding: 10px 12px;
+      padding: 9px 12px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: var(--surface);
+      background: rgba(5, 9, 18, 0.7);
       color: var(--text);
       font: inherit;
     }
 
-    .ask input:focus {
+    .ask input:focus,
+    .ai-form input:focus {
       border-color: var(--accent);
       outline: 0;
     }
 
     .ask button,
-    .pick-actions button {
+    .pick-actions button,
+    .ai-form button {
       padding: 8px 14px;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -498,25 +631,26 @@
     }
 
     .ask button:hover,
-    .pick-actions button:hover {
+    .pick-actions button:hover,
+    .ai-form button:hover:not(:disabled) {
       border-color: var(--accent);
       color: var(--link);
     }
 
     .ai-note {
       color: var(--faint);
-      font-size: 0.82em;
+      font-size: 0.78em;
     }
 
     .ai-note span:first-child {
-      color: var(--link);
+      color: var(--glow);
     }
 
     .pick {
       width: 100%;
-      max-width: 680px;
-      padding: 16px 18px;
-      background: var(--surface);
+      max-width: 720px;
+      padding: 14px 16px;
+      background: rgba(5, 9, 18, 0.7);
       border-left: 2px solid var(--accent);
       border-radius: 0 8px 8px 0;
       text-align: left;
@@ -536,133 +670,64 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 14px;
+      margin-top: 12px;
     }
 
     .pick-actions a {
       padding: 8px 14px;
       border-radius: 8px;
       background: var(--accent);
-      color: #000;
+      color: var(--accent-ink);
       font-weight: 600;
       text-decoration: none;
     }
 
-    .read .stars {
+    .or {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 6px;
       color: var(--faint);
-      font-size: 0.8em;
-      white-space: nowrap;
+      font-size: 0.82em;
     }
 
-    .read-desc,
-    .pick-desc {
-      margin: 4px 0 0;
-      color: var(--muted);
+    .or::before,
+    .or::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
     }
 
-    .reads-head {
+    .look {
       display: flex;
       flex-wrap: wrap;
       align-items: baseline;
       justify-content: space-between;
-      gap: 6px 20px;
+      gap: 4px 16px;
+      margin-bottom: 8px;
     }
 
-    .reads-head .filters {
-      margin-bottom: 0;
+    .look h4 {
+      color: var(--text);
+      font-family: var(--display);
+      font-size: 1.05em;
+      font-weight: 600;
     }
 
+    .look-tag,
     .updated {
       color: var(--faint);
-      font-size: 0.8em;
+      font-size: 0.78em;
     }
 
-    .day {
-      margin: 26px 0 6px;
-      color: var(--link);
-      font-size: 0.86em;
-      font-weight: 600;
-    }
-
-    .read {
-      display: grid;
-      grid-template-columns: 5ch minmax(0, 1fr);
-      gap: 0 14px;
-      margin: 0 -12px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      color: var(--text);
-    }
-
-    .read time {
-      color: var(--faint);
-      font-size: 0.82em;
-      line-height: 21px;
-    }
-
-    .read-title {
-      color: var(--text);
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .read-meta {
+    .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 0 10px;
-      color: var(--faint);
-      font-size: 0.8em;
-    }
-
-    .read-meta a {
-      color: var(--faint);
-    }
-
-    .tag::before {
-      content: "#";
-    }
-
-    .reads-state {
-      color: var(--muted);
-    }
-
-    .reads-state:empty {
-      display: none;
-    }
-
-    .online {
-      flex-shrink: 0;
-      margin-left: auto;
-      color: var(--faint);
-    }
-
-    .online::before {
-      content: "● ";
-      color: #7fbf7f;
-    }
-
-    .radio {
-      display: flex;
-      flex-shrink: 0;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .radio button {
-      padding: 0 6px;
-      border: 0;
-      background: none;
-      color: var(--link);
-      cursor: pointer;
-    }
-
-    .radio a {
-      color: var(--faint);
-      text-decoration: none;
-    }
-
-    #radio-now {
-      max-width: 34ch;
+      gap: 2px 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.84em;
     }
 
     .filter {
@@ -683,184 +748,341 @@
       text-underline-offset: 0.3em;
     }
 
-    .row {
-      display: grid;
-      grid-template-columns: 170px minmax(0, 1fr);
-      align-items: baseline;
-      gap: 0 16px;
-      padding: 9px 12px;
-      border-radius: 6px;
-      color: var(--text);
-      text-decoration: none;
+    .list {
+      flex: 1;
+      min-height: 120px;
+      margin: 0 -12px;
+      padding: 0 12px 16px;
     }
 
-    .link-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 4px 24px;
-      margin: -4px -12px -8px;
-    }
-
-    .row.link {
-      grid-template-columns: 28px minmax(0, 1fr);
-      align-items: center;
-      gap: 12px;
-    }
-
-    .avatar {
-      display: block;
-      border-radius: 6px;
-    }
-
-    @media (hover: hover) {
-      .rail a:hover,
-      .row:hover,
-      .read:hover {
-        --text: #000;
-        --muted: #000;
-        --faint: #000;
-        --link: #000;
-        background: var(--accent);
-      }
-
-      .socials a:hover {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: #000;
-      }
-    }
-
-    .row:focus-visible {
-      --text: #000;
-      --muted: #000;
-      --faint: #000;
-      --link: #000;
-      background: var(--accent);
-    }
-
-    footer {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 4px 24px;
-      margin-top: 56px;
-      color: var(--faint);
-      font-size: 0.82em;
-    }
-
-    .status {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      height: 28px;
-      padding-right: 14px;
-      background: var(--surface);
-      border-top: 1px solid var(--line);
-      font-size: 0.82em;
-    }
-
-    .status b {
-      align-self: stretch;
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-      background: var(--accent);
-      color: #000;
+    .day {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      margin: 14px -12px 4px;
+      padding: 4px 12px;
+      background: var(--surface-solid);
+      color: var(--glow);
+      font-size: 0.8em;
       font-weight: 600;
     }
 
-    #status-hint {
+    .read {
+      display: grid;
+      grid-template-columns: 5ch minmax(0, 1fr);
+      gap: 0 14px;
+      margin: 0 -12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--text);
+    }
+
+    .read time,
+    .read .stars {
+      color: var(--faint);
+      font-size: 0.8em;
+      line-height: 21px;
+      white-space: nowrap;
+    }
+
+    .read-title {
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .read-desc,
+    .pick-desc {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    .read-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 10px;
+      color: var(--faint);
+      font-size: 0.8em;
+    }
+
+    .read-meta a {
+      color: var(--faint);
+    }
+
+    .tag::before {
+      content: "#";
+    }
+
+    .reads-state {
+      padding: 12px 0;
+      color: var(--muted);
+    }
+
+    .reads-state:empty {
+      display: none;
+    }
+
+    @media (hover: hover) {
+      .read:hover {
+        background: rgba(255, 180, 94, 0.08);
+        box-shadow: inset 2px 0 0 var(--accent);
+      }
+
+      .read:hover .read-title {
+        color: var(--link);
+      }
+    }
+
+    /* ---------- IA da saferoom */
+    .ai {
+      grid-area: ai;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+      padding: 16px;
+    }
+
+    .ai h2 {
+      font-size: 1em;
+      font-weight: 400;
+    }
+
+    .ai-lede {
+      color: var(--text);
+      font-family: var(--display);
+      font-size: 1.1em;
+      line-height: 1.3;
+    }
+
+    .ai-safe {
+      color: var(--faint);
+      font-size: 0.8em;
+    }
+
+    .chat {
+      display: flex;
       flex: 1;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 80px;
+      padding: 10px;
+      background: rgba(5, 9, 18, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .msg {
+      max-width: 92%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 0.92em;
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: rgba(94, 230, 255, 0.07);
+      border: 1px solid var(--line);
+    }
+
+    .msg.me {
+      align-self: flex-end;
+      background: rgba(255, 180, 94, 0.12);
+      border: 1px solid rgba(255, 180, 94, 0.25);
+    }
+
+    .ai-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ai-form :disabled {
+      cursor: progress;
+      opacity: 0.55;
+    }
+
+    .msg p {
+      margin: 0 0 6px;
+    }
+
+    .msg-links {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    .msg-links span {
+      color: var(--faint);
+      font-size: 0.86em;
+    }
+
+    .ai-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 10px;
+      font-size: 0.78em;
+    }
+
+    .ai-chat {
+      padding: 3px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .ai-chat:hover {
+      border-color: var(--glow);
+      color: var(--text);
+    }
+
+    .ai-chat[aria-pressed="true"] {
+      border-color: var(--glow);
+      box-shadow: inset 0 0 12px -4px var(--glow);
+      color: var(--glow);
+    }
+
+    .ai-state {
+      color: var(--faint);
+    }
+
+    /* ---------- dock: utils, links, radio */
+    .dock {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 20px;
+      padding: 8px 20px;
+      background: rgba(7, 11, 20, 0.82);
+      border-top: 1px solid var(--line);
+      color: var(--faint);
+      font-size: 0.82em;
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+
+    .utils {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+    }
+
+    .utils span {
+      color: var(--muted);
+    }
+
+    .utils a,
+    .dock .radio a {
+      color: var(--faint);
+      text-decoration: none;
+    }
+
+    .utils a:hover,
+    .dock .radio a:hover {
+      color: var(--link);
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .online::before {
+      content: "● ";
+      color: var(--ok);
+    }
+
+    .dock .radio {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       min-width: 0;
     }
 
-    .status span {
+    .dock .radio button {
+      padding: 0 6px;
+      border: 0;
+      background: none;
+      color: var(--link);
+      cursor: pointer;
+    }
+
+    .dock [data-radio-now] {
+      max-width: 34ch;
       overflow: hidden;
       color: var(--muted);
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    @media (max-width: 760px) {
-      html {
-        scroll-padding-top: 52px;
+    /* Tela media: a IA desce para baixo do lobby. */
+    @media (max-width: 1180px) {
+      .room {
+        grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+          "lobby reader"
+          "ai reader";
       }
+    }
 
-      #status-path,
-      #status-hint {
-        display: none;
-      }
-
-      .online {
-        margin-left: 12px;
-      }
-
-      .radio {
-        margin-left: auto;
-      }
-
+    /* Celular: a sala vira uma coluna que rola por dentro; a pagina continua parada. */
+    @media (max-width: 820px) {
       .topbar {
-        position: static;
-        padding: 12px 16px;
+        padding: 10px 16px;
       }
 
-      .app {
-        display: block;
-        width: calc(100% - 32px);
+      .topbar-right [data-i18n="tagline"] {
+        display: none;
       }
 
-      .rail {
-        z-index: 9;
-        top: 0;
+      .room {
         display: flex;
-        flex-wrap: wrap;
-        gap: 2px 4px;
-        margin: 0 -16px;
-        padding: 8px 16px;
-        background: var(--bg);
-        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        gap: 14px;
+        padding: 14px 16px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
       }
 
-      .rail a {
-        display: block;
-        margin: 0;
-        padding: 2px 6px;
+      .room > * {
+        flex-shrink: 0;
       }
 
-      .rail .root,
-      .tree,
-      .rail .n {
+      .lobby {
+        overflow: visible;
+      }
+
+      .reader {
+        flex: none;
+        height: 82dvh;
+      }
+
+      .ai {
+        flex: none;
+        height: 60dvh;
+      }
+
+      .tabpanel {
+        padding: 14px 14px 0;
+      }
+
+      .dock {
+        padding: 6px 16px;
+      }
+
+      .utils span,
+      .dock .radio a,
+      .online {
         display: none;
       }
 
-      .fetch {
-        grid-template-columns: 96px minmax(0, 1fr);
-        align-items: start;
-        padding-top: 32px;
-      }
-
-      .dog img {
-        width: 96px;
-        height: 124px;
-      }
-
-      .dog figcaption {
-        display: none;
-      }
-
-      .box {
-        margin-top: 44px;
-        padding: 26px 14px 16px;
-      }
-
-      .tiles,
-      .link-list {
-        grid-template-columns: minmax(0, 1fr);
+      .dock [data-radio-now] {
+        max-width: 18ch;
       }
 
       .read {
@@ -870,7 +1092,9 @@
   </style>
 </head>
 
-<body>
+<body data-chair="console">
+  <div class="floor" aria-hidden="true"></div>
+
   <header class="topbar">
     <a class="prompt" href="#">$:~/raimundo.sh<b id="prompt-path"></b></a>
     <div class="topbar-right">
@@ -879,88 +1103,55 @@
     </div>
   </header>
 
-  <div class="app">
-    <nav class="rail" aria-label="Navegacao principal">
-      <a class="root" href="#">~/</a>
-      <a href="#sobre" data-spy><span class="tree" aria-hidden="true">├─</span><span>sobre/</span><span class="n"></span></a>
-      <a href="#projetos" data-spy><span class="tree" aria-hidden="true">├─</span><span>projetos/</span><span class="n">4</span></a>
-      <div class="dir"><span class="tree" aria-hidden="true">├─</span><span>interesting/</span></div>
-      <a class="sub" href="#interesting-posts" data-spy data-path="/interesting/posts"><span class="tree" aria-hidden="true">│  ├─</span><span>posts/</span><span class="n" id="reads-count"></span></a>
-      <a class="sub" href="#interesting-projects" data-spy data-path="/interesting/projects"><span class="tree" aria-hidden="true">│  └─</span><span>projects/</span><span class="n" id="iproj-count"></span></a>
-      <a href="#links" data-spy><span class="tree" aria-hidden="true">├─</span><span>links/</span><span class="n">5</span></a>
-      <a href="agents.html"><span class="tree" aria-hidden="true">└─</span><span>AGENTS.md</span><span class="n"></span></a>
-    </nav>
-
-    <main class="pane">
-      <section id="sobre" class="fetch" aria-labelledby="intro-title">
+  <main class="room">
+    <section id="sobre" class="lobby scroll" aria-labelledby="intro-title">
+      <div class="welcome panel">
         <figure class="dog">
           <img src="assets/thumbs/funcionario.webp" alt="Cachorro funcionario do mes olhando para a camera" width="320" height="434">
-          <figcaption data-i18n="employee.label">funcionario do mes</figcaption>
+          <figcaption data-i18n="employee.label">guarda da saferoom</figcaption>
         </figure>
-        <div>
-          <h1 id="intro-title"><span data-i18n="hero.title">Coisas que me interessam</span><span data-i18n="hero.sub">e também podem te interessar.</span></h1>
-          <!-- Bio e experiencia entram aqui a partir do export do LinkedIn. -->
-          <div class="socials">
-            <a href="https://github.com/hi-mundo" rel="me noopener">github</a>
-            <a href="https://www.linkedin.com/in/hi-mundo" rel="me noopener">linkedin</a>
-            <a href="https://instagram.com/__hi.mundo" rel="me noopener">instagram</a>
-          </div>
-          <!-- Limpe suas botas: so le o que o proprio browser entrega a qualquer site. Nada sai daqui. -->
-          <details class="boots" id="boots">
-            <summary><span data-i18n="boots.title">heyy, limpe suas botas antes de entrar</span> <span class="boots-count" id="boots-count"></span></summary>
-            <p class="boots-lede" data-i18n="boots.lede">cada opção de privacidade desligada deixa uma migalha. as suas:</p>
-            <ul class="boots-list" id="boots-list"></ul>
-            <p class="boots-foot"><span data-i18n="boots.foot">limpar cookies no</span> <a href="https://support.google.com/chrome/answer/95647" rel="noopener">Chrome</a> · <a href="https://support.mozilla.org/kb/clear-cookies-and-site-data-firefox" rel="noopener">Firefox</a> · <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" rel="noopener">Safari</a></p>
-          </details>
-        </div>
-      </section>
+        <p class="label">~/saferoom</p>
+        <h1 id="intro-title"><span data-i18n="hero.title">bem-vindo à saferoom,</span><span data-i18n="hero.sub">space cowboy.</span></h1>
+        <p class="lede" data-i18n="hero.lede">uma parada interplanetária no shell. leia algo interessante, toque o rádio, escolha uma cadeira e fique à vontade.</p>
+        <p class="safe" data-i18n="hero.safe">tudo é seguro · tudo roda no seu navegador</p>
+      </div>
 
-      <section id="projetos" class="box" aria-labelledby="projetos-title">
-        <h2 id="projetos-title" class="box-title">~/projetos</h2>
-        <span class="box-tag">github</span>
-        <!-- Amostra estatica de api.github.com/users/hi-mundo/repos: o proximo slice troca por fetch no browser. -->
-        <div class="tiles">
-          <a class="tile" href="https://github.com/hi-mundo/structured-vibe-code-plugin" rel="noopener">
-            <img class="thumb " src="https://raw.githubusercontent.com/hi-mundo/structured-vibe-code-plugin/HEAD/assets/banner.png" alt="" loading="lazy">
-            <div class="tile-body">
-              <h3>structured-vibe-code-plugin</h3>
-              <div class="row-meta"><span>Python</span><time>02/11/2026</time></div>
-              <p class="hint">AI pair-programming plugin for Claude Code and Codex.</p>
-            </div>
-          </a>
-          <a class="tile" href="https://github.com/hi-mundo/HomeSweetHome" rel="noopener">
-            <img class="thumb " src="https://raw.githubusercontent.com/hi-mundo/HomeSweetHome/HEAD/docs/screenshot.jpg" alt="" loading="lazy">
-            <div class="tile-body">
-              <h3>HomeSweetHome</h3>
-              <div class="row-meta"><span>Python</span><time>02/11/2026</time></div>
-              <p class="hint">Self-hosted kitchen &amp; household assistant.</p>
-            </div>
-          </a>
-          <a class="tile" href="https://github.com/hi-mundo/AIssuer" rel="noopener">
-            <img class="thumb contain" src="https://raw.githubusercontent.com/hi-mundo/AIssuer/HEAD/assets/logo.png" alt="" loading="lazy">
-            <div class="tile-body">
-              <h3>AIssuer</h3>
-              <div class="row-meta"><span>Python</span><span>★ 1</span><time>28/07/2026</time></div>
-              <p class="hint">Hypothesis-driven issue and bug discovery.</p>
-            </div>
-          </a>
-          <a class="tile" href="https://github.com/hi-mundo/SIGNAL" rel="noopener">
-            <div class="thumb thumb-text" aria-hidden="true">SIGNAL</div>
-            <div class="tile-body">
-              <h3>SIGNAL</h3>
-              <div class="row-meta"><span>Python</span><span>★ 4</span><time>14/07/2026</time></div>
-              <p class="hint">A pattern framework for LLM UX and human-AI interaction.</p>
-            </div>
-          </a>
+      <div class="radio-card panel" role="group" aria-labelledby="radio-label">
+        <button class="radio-play" type="button" data-radio-play aria-label="Tocar rádio">▶</button>
+        <div class="now">
+          <span class="label" id="radio-label">~/radio</span>
+          <span data-radio-now>rádio</span>
         </div>
-      </section>
+        <button class="radio-next" type="button" data-radio-next aria-label="Próxima estação">›</button>
+      </div>
 
-      <section id="interesting-posts" class="box" aria-labelledby="posts-title">
-        <h2 id="posts-title" class="box-title">~/interesting/posts</h2>
-        <span class="box-tag" id="reads-tag"></span>
+      <fieldset class="chairs panel">
+        <legend class="label" data-i18n="chair.pick">escolha uma cadeira</legend>
+        <div class="chair-row">
+          <button class="chair" type="button" data-chair="console" aria-pressed="true"><b aria-hidden="true">⌨</b><span data-i18n="chair.console">console</span></button>
+          <button class="chair" type="button" data-chair="window" aria-pressed="false"><b aria-hidden="true">◫</b><span data-i18n="chair.window">janela</span></button>
+          <button class="chair" type="button" data-chair="fireplace" aria-pressed="false"><b aria-hidden="true">♨</b><span data-i18n="chair.fireplace">lareira</span></button>
+        </div>
+      </fieldset>
+
+      <!-- Limpe suas botas: so le o que o proprio browser entrega a qualquer site. Nada sai daqui. -->
+      <details class="boots panel" id="boots">
+        <summary><span data-i18n="boots.title">heyy, limpe suas botas antes de entrar</span> <span class="boots-count" id="boots-count"></span></summary>
+        <p class="boots-lede" data-i18n="boots.lede">cada opção de privacidade desligada deixa uma migalha. as suas:</p>
+        <ul class="boots-list" id="boots-list"></ul>
+        <p class="boots-foot"><span data-i18n="boots.foot">limpar cookies no</span> <a href="https://support.google.com/chrome/answer/95647" rel="noopener">Chrome</a> · <a href="https://support.mozilla.org/kb/clear-cookies-and-site-data-firefox" rel="noopener">Firefox</a> · <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" rel="noopener">Safari</a></p>
+      </details>
+    </section>
+
+    <div class="reader panel">
+      <div class="tabs" role="tablist" aria-label="O que ler">
+        <button class="tab" type="button" role="tab" id="tab-posts" aria-controls="interesting-posts" aria-selected="true">~/interesting/posts<span class="n" id="reads-count"></span></button>
+        <button class="tab" type="button" role="tab" id="tab-projects" aria-controls="interesting-projects" aria-selected="false" tabindex="-1">~/interesting/projects<span class="n" id="iproj-count"></span></button>
+      </div>
+
+      <section id="interesting-posts" class="tabpanel" role="tabpanel" aria-labelledby="tab-posts">
         <div class="lucky">
-          <button class="lucky-button" type="button" id="lucky" data-i18n="reads.lucky">me dá algo interessante pra ler</button>
-          <p class="lucky-sub" data-i18n="reads.sub">mantenha-se atualizado do que está rolando agora.</p>
+          <h2><button class="lucky-button" type="button" id="lucky" data-i18n="reads.lucky">me dá algo interessante pra ler</button></h2>
           <form class="ask" id="ask">
             <input id="ask-input" type="text" autocomplete="off" aria-label="O que você quer ler" placeholder="ou diga o que você quer ler…">
             <button type="submit" data-i18n="reads.go">buscar</button>
@@ -968,21 +1159,20 @@
           <p class="ai-note"><span data-i18n="reads.note">a IA roda no seu browser (é anônimo hihi)</span> · <span class="lucky-state" id="lucky-state" data-i18n="reads.model">modelinho de 118 MB, baixa uma vez</span></p>
           <div id="pick" class="pick" hidden aria-live="polite"></div>
         </div>
-        <div class="reads-head">
-          <div class="filters" id="tag-filters" role="group" aria-label="Filtrar por tag"></div>
-          <span class="updated" id="reads-updated"></span>
+        <p class="or" data-i18n="or">ou</p>
+        <div class="look">
+          <h4 data-i18n="look">olhe você mesmo</h4>
+          <span class="look-tag"><span id="reads-tag"></span> · <span class="updated" id="reads-updated"></span></span>
         </div>
-        <div id="reads"></div>
+        <div class="filters" id="tag-filters" role="group" aria-label="Filtrar por tag"></div>
+        <div class="list scroll" id="reads"></div>
         <p class="reads-state" id="reads-state" role="status"></p>
         <noscript><p class="reads-state">As leituras precisam de JavaScript.</p></noscript>
       </section>
 
-      <section id="interesting-projects" class="box" aria-labelledby="iproj-title">
-        <h2 id="iproj-title" class="box-title">~/interesting/projects</h2>
-        <span class="box-tag" id="iproj-tag"></span>
+      <section id="interesting-projects" class="tabpanel" role="tabpanel" aria-labelledby="tab-projects" hidden>
         <div class="lucky">
-          <button class="lucky-button" type="button" data-i18n="proj.lucky">me mostra um projeto legal</button>
-          <p class="lucky-sub" data-i18n="proj.sub">o que está em alta no Hugging Face e no GitHub esta semana.</p>
+          <h2><button class="lucky-button" type="button" data-i18n="proj.lucky">me mostra um projeto legal</button></h2>
           <form class="ask">
             <input id="iproj-input" type="text" autocomplete="off" aria-label="Que projeto você procura" placeholder="ou diga que tipo de projeto você quer…">
             <button type="submit" data-i18n="reads.go">buscar</button>
@@ -990,65 +1180,54 @@
           <p class="ai-note"><span data-i18n="reads.note">a IA roda no seu browser (é anônimo hihi)</span> · <span class="lucky-state" data-i18n="reads.model">modelinho de 118 MB, baixa uma vez</span></p>
           <div class="pick" hidden aria-live="polite"></div>
         </div>
-        <div class="reads-head">
-          <div class="filters" id="iproj-filters" role="group" aria-label="Filtrar por fonte"></div>
-          <span class="updated" id="iproj-updated"></span>
+        <p class="or" data-i18n="or">ou</p>
+        <div class="look">
+          <h4 data-i18n="look">olhe você mesmo</h4>
+          <span class="look-tag"><span id="iproj-tag"></span> · <span class="updated" id="iproj-updated"></span></span>
         </div>
-        <div id="iproj-list"></div>
+        <div class="filters" id="iproj-filters" role="group" aria-label="Filtrar por fonte"></div>
+        <div class="list scroll" id="iproj-list"></div>
         <p class="reads-state" id="iproj-state" role="status"></p>
       </section>
+    </div>
 
-      <section id="links" class="box" aria-labelledby="links-title">
-        <h2 id="links-title" class="box-title">~/links</h2>
-        <span class="box-tag" data-i18n="links.source">curadoria + stars</span>
-        <div class="link-list">
-          <a class="row link" id="metalink" href="https://odisseiadoputo.cc" rel="noopener">
-            <img class="avatar" src="https://github.com/hi-mundo.png?size=64" alt="" width="28" height="28" loading="lazy">
-            <h3>odisseiadoputo.cc</h3>
-            <p class="hint"><span data-i18n="links.odisseia">Canto separado para viagens tech ou nao, ideias de roteiro, sonhos e textos que nao precisam fingir normalidade.</span></p>
-          </a>
-          <!-- Amostra estatica das stars de hi-mundo: o proximo slice troca por fetch no browser. -->
-          <a class="row link" href="https://github.com/NoraCodes/crackmes" rel="noopener">
-            <img class="avatar" src="https://github.com/NoraCodes.png?size=64" alt="" width="28" height="28" loading="lazy">
-            <h3>crackmes</h3>
-            <p class="hint">Some CrackMe codes for Linux x86/x86_64</p>
-          </a>
-          <a class="row link" href="https://github.com/Hack-with-Github/Awesome-Hacking" rel="noopener">
-            <img class="avatar" src="https://github.com/Hack-with-Github.png?size=64" alt="" width="28" height="28" loading="lazy">
-            <h3>Awesome-Hacking</h3>
-            <p class="hint">Awesome lists for hackers, pentesters and security researchers</p>
-          </a>
-          <a class="row link" href="https://github.com/psachin/kernel_modules" rel="noopener">
-            <img class="avatar" src="https://github.com/psachin.png?size=64" alt="" width="28" height="28" loading="lazy">
-            <h3>kernel_modules</h3>
-            <p class="hint">linux kernel modules examples</p>
-          </a>
-          <a class="row link" href="https://github.com/ysymyth/awesome-language-agents" rel="noopener">
-            <img class="avatar" src="https://github.com/ysymyth.png?size=64" alt="" width="28" height="28" loading="lazy">
-            <h3>awesome-language-agents</h3>
-            <p class="hint">List of language agents</p>
-          </a>
-        </div>
-      </section>
+    <!-- IA da saferoom: estatica, gratis e privada. Roda inteira no browser de quem pergunta. -->
+    <aside class="ai panel" aria-labelledby="ai-title">
+      <h2 class="label" id="ai-title">~/saferoom-ai</h2>
+      <p class="ai-lede" data-i18n="ai.lede">IA estática, grátis e privada pra perguntas simples.</p>
+      <p class="ai-safe" data-i18n="ai.safe">(tudo é seguro, tudo roda no seu navegador)</p>
+      <div class="chat scroll" id="ai-log" aria-live="polite">
+        <p class="msg bot" data-i18n="ai.hello">howdy. me pergunta algo curto, tipo "o que tem de novo em segurança?"</p>
+      </div>
+      <form class="ai-form" id="ai-form">
+        <input id="ai-input" type="text" autocomplete="off" aria-label="Pergunta para a IA" placeholder="pergunte algo curto…">
+        <button type="submit" data-i18n="ai.send">enviar</button>
+      </form>
+      <div class="ai-tools">
+        <button class="ai-chat" type="button" id="ai-chat" aria-pressed="false">ligar conversa</button>
+        <span class="ai-state" id="ai-state" role="status"></span>
+      </div>
+    </aside>
+  </main>
 
-      <footer id="contribuir">
-        <p data-i18n="footer">raimundo.sh · textos primeiro, pose depois</p>
-        <a href="https://github.com/hi-mundo/raimundo.sh" rel="noopener" data-i18n="contribute.title">Contribuir</a>
-      </footer>
-    </main>
-  </div>
+  <footer class="dock" id="contribuir">
+    <nav class="utils" aria-label="my utils">
+      <span>my utils:</span>
+      <a href="https://github.com/hi-mundo/structured-vibe-code-plugin" rel="noopener">Structured Vibe Code<span class="hint">Structured Vibe Code: pair-programming com IA onde o dev segura o volante.</span></a>
+      <a href="https://github.com/hi-mundo/AIssuer" rel="noopener">AIssuer<span class="hint">Descoberta de issues e bugs guiada por hipóteses.</span></a>
+      <a href="https://github.com/JuliusBrussee/caveman" rel="noopener">caveman<span class="hint">Por que usar muito token quando pouco token resolve.</span></a>
+    </nav>
 
-  <div class="status">
-    <b id="status-path" aria-hidden="true">~/raimundo.sh</b>
-    <span id="status-hint" aria-hidden="true"></span>
+
+    <span class="spacer"></span>
     <span class="online" id="online" title="leitores online"></span>
     <div class="radio">
-      <button type="button" id="radio-play" aria-label="Tocar rádio">▶</button>
-      <button type="button" id="radio-next" aria-label="Próxima estação">›</button>
-      <span id="radio-now">rádio</span>
+      <button type="button" data-radio-play aria-label="Tocar rádio">▶</button>
+      <button type="button" data-radio-next aria-label="Próxima estação">›</button>
+      <span data-radio-now>rádio</span>
       <a href="https://somafm.com/support/" rel="noopener" data-i18n="radio.support">SomaFM ♥</a>
     </div>
-  </div>
+  </footer>
 
   <script>
     const translations = window.siteText = {
@@ -1057,7 +1236,7 @@
         "nav.posts": "posts",
         "nav.metalink": "metalink",
         "nav.contribute": "contribuir",
-        "employee.label": "funcionario do mes",
+        "employee.label": "guarda da saferoom",
         "employee.note": "(nao deixou eu trabalhar; virou requisito de produto)",
         "reads.lucky": "me dá algo interessante pra ler",
         "reads.sub": "mantenha-se atualizado do que está rolando agora.",
@@ -1120,30 +1299,52 @@
         "boots.site": "este site",
         "boots.siteValue": "{c} cookies · {s} itens guardados",
         "boots.wipe": "limpar",
-        "hero.title": "Coisas que me interessam",
-        "hero.sub": "e também podem te interessar.",
+        "hero.title": "bem-vindo à saferoom,",
+        "hero.sub": "space cowboy.",
         "nav.projects": "projetos",
         "nav.links": "links",
         "nav.about": "sobre",
         "links.source": "curadoria + stars",
         "links.odisseia": "Canto separado para viagens tech ou nao, ideias de roteiro, sonhos e textos que nao precisam fingir normalidade.",
-        "hero.lede": "Um caderno publico para textos, notas e rascunhos sobre tecnologia, seguranca, IA, operacao, cultura tecnica e outras coisas que ficam martelando ate virar paragrafo.",
+        "hero.lede": "uma parada interplanetária no shell. leia algo interessante, toque o rádio, escolha uma cadeira e fique à vontade.",
         "metalink.copy": "<a href=\"https://odisseiadoputo.cc\">odisseiadoputo.cc</a> fica como canto separado para viagens tech ou nao, ideias de roteiro, sonhos e textos que nao precisam fingir normalidade para passar na recepcao.",
         "contribute.title": "Contribuir",
         "contribute.copy": "Achou erro, quer complementar fonte, discordou de uma conclusao ou quer propor um texto? Abra um PR no repositorio publico do website.",
         "bottom.title": "No rodape da pilha",
         "bottom.agents": "Contrato editorial publico para orientar agentes sem vazar regra pessoal.",
         "bottom.free": "Se um dia existir notificacao por e-mail, a promessa e so receber o post quando sair.",
-        "footer": "raimundo.sh · textos primeiro, pose depois"
+        "footer": "raimundo.sh · textos primeiro, pose depois",
+        "hero.safe": "tudo é seguro · tudo roda no seu navegador",
+        "or": "ou",
+        "look": "olhe você mesmo",
+        "chair.pick": "escolha uma cadeira",
+        "chair.console": "console",
+        "chair.window": "janela",
+        "chair.fireplace": "lareira",
+        "ai.lede": "IA estática, grátis e privada pra perguntas simples.",
+        "ai.safe": "(tudo é seguro, tudo roda no seu navegador)",
+        "ai.hello": "howdy. me pergunta algo curto, tipo \"o que tem de novo em segurança?\"",
+        "ai.send": "enviar",
+        "ai.ask": "pergunte algo curto…",
+        "ai.found": "achei isso perto da sua pergunta:",
+        "ai.none": "não achei nada parecido aqui na saferoom. tenta outras palavras.",
+        "ai.wait": "as leituras ainda estão chegando. tenta de novo em alguns segundos.",
+        "ai.talk": "ligar conversa",
+        "ai.talkOn": "conversa ligada",
+        "ai.loading": "baixando o modelinho que fala",
+        "ai.thinking": "pensando",
+        "ai.mode": "modo busca: responde com links, sem inventar.",
+        "ai.modeChat": "modo conversa: modelinho de 360M, pode errar; confira os links.",
+        "ai.error": "deu ruim aqui no seu browser. tenta de novo."
       },
       en: {
         "tagline": "the curious fool",
         "nav.posts": "posts",
         "nav.metalink": "metalink",
         "nav.contribute": "contribute",
-        "employee.label": "employee of the month",
+        "employee.label": "saferoom guard",
         "employee.note": "(blocked real work; became a product requirement)",
-        "reads.lucky": "give me something interesting to read",
+        "reads.lucky": "get me something interesting to read",
         "reads.sub": "stay up to date with what's happening right now.",
         "reads.ask": "or tell me what you want to read…",
         "reads.go": "find",
@@ -1204,21 +1405,43 @@
         "boots.site": "this site",
         "boots.siteValue": "{c} cookies · {s} items stored",
         "boots.wipe": "wipe",
-        "hero.title": "Things that interest me",
-        "hero.sub": "and might interest you too.",
+        "hero.title": "welcome to the saferoom,",
+        "hero.sub": "space cowboy.",
         "nav.projects": "projects",
         "nav.links": "links",
         "nav.about": "about",
         "links.source": "curated + stars",
         "links.odisseia": "A separate corner for tech trips or not, script ideas, dreams, and texts that do not need to pretend normality.",
-        "hero.lede": "A public notebook for texts, notes, and drafts about technology, security, AI, operations, technical culture, and the things that keep knocking around until they become paragraphs.",
+        "hero.lede": "an interplanetary shell stop. read something interesting, play the radio, pick a chair and enjoy.",
         "metalink.copy": "<a href=\"https://odisseiadoputo.cc\">odisseiadoputo.cc</a> stays as a separate corner for tech trips or not, script ideas, dreams, and texts that do not need to pretend normality at reception.",
         "contribute.title": "Contribute",
         "contribute.copy": "Found an error, want to add a source, disagree with a conclusion, or want to propose a text? Open a PR in the website's public repository.",
         "bottom.title": "At the bottom of the stack",
         "bottom.agents": "Public editorial contract for guiding agents without leaking personal rules.",
         "bottom.free": "If email notification ever exists, the promise is only to receive the post when it ships.",
-        "footer": "raimundo.sh · text first, posing later"
+        "footer": "raimundo.sh · text first, posing later",
+        "hero.safe": "all is safe · all runs in your web browser",
+        "or": "or",
+        "look": "look by yourself",
+        "chair.pick": "pick a chair",
+        "chair.console": "console",
+        "chair.window": "window",
+        "chair.fireplace": "fireplace",
+        "ai.lede": "static, free and private AI for simple questions.",
+        "ai.safe": "(all is safe, all runs in your web browser)",
+        "ai.hello": "howdy. ask me something short, like \"what's new in security?\"",
+        "ai.send": "send",
+        "ai.ask": "ask something short…",
+        "ai.found": "found this near your question:",
+        "ai.none": "nothing close to that in the saferoom. try other words.",
+        "ai.wait": "the reads are still arriving. try again in a few seconds.",
+        "ai.talk": "turn on chat",
+        "ai.talkOn": "chat on",
+        "ai.loading": "downloading the talking model",
+        "ai.thinking": "thinking",
+        "ai.mode": "search mode: answers with links, never makes things up.",
+        "ai.modeChat": "chat mode: tiny 360M model, it can be wrong; check the links.",
+        "ai.error": "something failed in your browser. try again."
       }
     };
 
@@ -1253,60 +1476,56 @@
       applyLanguage(current === "pt" ? "en" : "pt");
     });
 
-    // Rail: acompanha o scroll do pane; prompt e status bar mostram a secao atual.
-    const sections = [...document.querySelectorAll("#sobre, .pane .box")];
-    const spyLinks = document.querySelectorAll("[data-spy]");
+    // Abas do leitor: posts e projects dividem o mesmo painel; so o conteudo rola.
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
     const promptPath = document.getElementById("prompt-path");
-    const statusPath = document.getElementById("status-path");
-    const statusHint = document.getElementById("status-hint");
-    let lockedUntil = 0;
 
-    function markActive(id) {
-      spyLinks.forEach((link) => {
-        if (link.getAttribute("href") === `#${id}`) link.setAttribute("aria-current", "true");
-        else link.removeAttribute("aria-current");
+    function selectTab(id, focus) {
+      tabs.forEach((tab) => {
+        const on = tab.getAttribute("aria-controls") === id;
+        tab.setAttribute("aria-selected", String(on));
+        tab.tabIndex = on ? 0 : -1;
+        document.getElementById(tab.getAttribute("aria-controls")).hidden = !on;
+        if (on && focus) tab.focus();
       });
-      // A home do terminal e o proprio ~/raimundo.sh; sobre/ mora nela.
-      // Secoes dentro de pastas (interesting/) dizem o caminho no data-path do rail.
-      const link = [...spyLinks].find((item) => item.getAttribute("href") === `#${id}`);
-      const path = id === "sobre" ? "" : link?.dataset.path ?? `/${id}`;
-      promptPath.textContent = path;
-      statusPath.textContent = `~/raimundo.sh${path}`;
+      promptPath.textContent = id === "interesting-projects" ? "/interesting/projects" : "";
     }
 
-    function spy() {
-      if (Date.now() < lockedUntil) return;
-      const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-      let current = "sobre";
-      sections.forEach((section) => {
-        if (section.getBoundingClientRect().top <= 110) current = section.id;
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => {
+        const id = tab.getAttribute("aria-controls");
+        selectTab(id);
+        history.replaceState(null, "", `#${id}`);
       });
-      markActive(atEnd && window.scrollY > 0 ? sections[sections.length - 1].id : current);
-    }
-
-    // Clique no rail manda: o spy espera o scroll suave terminar para nao marcar outra secao.
-    spyLinks.forEach((link) => {
-      link.addEventListener("click", () => {
-        lockedUntil = Date.now() + 900;
-        markActive(link.getAttribute("href").slice(1));
+      tab.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        const next = tabs[(index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+        selectTab(next.getAttribute("aria-controls"), true);
       });
     });
 
-    window.addEventListener("scroll", spy, { passive: true });
-    spy();
+    selectTab(location.hash === "#interesting-projects" ? "interesting-projects" : "interesting-posts");
 
-    // Status bar: mostra o resumo ou o destino do item sob o cursor ou o foco.
-    function showHint(event) {
-      const item = event.target.closest && event.target.closest("a");
-      if (!item) {
-        statusHint.textContent = "";
-        return;
+    // Cadeira: muda a luz da sala e fica lembrada neste browser.
+    const chairs = document.querySelectorAll(".chair");
+
+    function sit(name) {
+      document.body.dataset.chair = name;
+      chairs.forEach((chair) => chair.setAttribute("aria-pressed", String(chair.dataset.chair === name)));
+      try {
+        localStorage.setItem("chair", name);
+      } catch {
+        // Sem storage a cadeira so nao fica lembrada.
       }
-      const hint = item.querySelector(".hint");
-      statusHint.textContent = hint ? hint.textContent : item.href.replace(/^https?:\/\//, "");
     }
-    document.addEventListener("pointerover", showHint);
-    document.addEventListener("focusin", showHint);
+
+    chairs.forEach((chair) => chair.addEventListener("click", () => sit(chair.dataset.chair)));
+    try {
+      const saved = localStorage.getItem("chair");
+      if ([...chairs].some((chair) => chair.dataset.chair === saved)) sit(saved);
+    } catch {
+      // Fica no console.
+    }
   </script>
 
   <script type="module">
@@ -1864,6 +2083,202 @@
       seenKey: "projects-seen",
     });
 
+    // ---------- saferoom-ai
+    // Duas marchas, as duas no browser de quem pergunta; nada sai daqui.
+    // 1) busca (padrao): o MiniLM que ja escolhe as leituras acha os itens mais perto da
+    //    pergunta e responde com links. Nao escreve texto, entao nao inventa.
+    // 2) conversa (opcional): SmolLM2-360M-Instruct (Apache-2.0) escreve uma resposta curta
+    //    usando so esses itens como contexto. Modelo pequeno erra; por isso os links vem junto.
+    const CHAT_MODEL = "HuggingFaceTB/SmolLM2-360M-Instruct";
+    const AI_POOLS = [
+      { list: () => reads.items, key: "reads-seen", text: (item) => item.title },
+      { list: () => projects.items, key: "projects-seen", text: (item) => `${item.title}. ${item.desc}` },
+    ];
+    const aiLog = $("ai-log");
+    const aiInput = $("ai-input");
+    const aiState = (text) => {
+      $("ai-state").textContent = text;
+    };
+    let chat;
+    let loadingChat;
+    let chatOn = false;
+    let aiBusy = false;
+
+    function say(who, text) {
+      const node = el("div", `msg ${who}`, text);
+      aiLog.append(node);
+      aiLog.scrollTop = aiLog.scrollHeight;
+      return node;
+    }
+
+    // Mesmo cache de vetores das secoes: o que o botao grande ja leu nao e lido de novo.
+    async function poolVectors({ list, key, text }) {
+      const vectorKey = `vectors:${MODEL}:${key}`;
+      const known = (await store.get(vectorKey)) ?? {};
+      const items = list();
+      const missing = items.filter((item) => !known[item.id]);
+      if (missing.length) {
+        aiState(`${t("reads.reading")}…`);
+        (await vectors(missing.map(text))).forEach((vector, i) => {
+          known[missing[i].id] = vector;
+        });
+        store.set(vectorKey, Object.fromEntries(items.map((item) => [item.id, known[item.id]])));
+      }
+      return items.map((item) => [item, known[item.id]]);
+    }
+
+    async function nearest(question, size = 3) {
+      await loadModel(aiState);
+      const [asked] = await vectors([question]);
+      const ranked = [];
+      for (const pool of AI_POOLS) {
+        for (const [item, vector] of await poolVectors(pool)) {
+          if (vector && safeUrl(item.url)) ranked.push({ item, score: cosine(asked, vector) });
+        }
+      }
+      // Abaixo disso a frase so divide palavras soltas com o titulo: melhor dizer que nao achou.
+      return ranked.sort((a, b) => b.score - a.score).filter(({ score }) => score > 0.3).slice(0, size);
+    }
+
+    function linksMessage(found) {
+      const node = el("div", "msg bot");
+      const list = el("ul", "msg-links");
+      for (const { item } of found) {
+        const row = el("li");
+        const link = el("a", "", item.title);
+        link.href = safeUrl(item.url);
+        link.rel = "noopener";
+        link.target = "_blank";
+        row.append(link, el("span", "", ` · ${item.sourceName}`));
+        list.append(row);
+      }
+      node.append(el("p", "", t("ai.found")), list);
+      aiLog.append(node);
+      aiLog.scrollTop = aiLog.scrollHeight;
+    }
+
+    // WebGPU aguenta o modelo em 4 bits (~273 MB); sem ela, wasm em 8 bits (~365 MB).
+    async function chatSetup() {
+      const adapter = navigator.gpu ? await navigator.gpu.requestAdapter().catch(() => null) : null;
+      return adapter ? { device: "webgpu", dtype: "q4f16", mb: 273 } : { device: "wasm", dtype: "q8", mb: 365 };
+    }
+
+    function loadChat() {
+      loadingChat ??= (async () => {
+        const setup = await chatSetup();
+        const files = new Map();
+        const { pipeline, TextStreamer } = await import(AI_LIB);
+        const generator = await pipeline("text-generation", CHAT_MODEL, {
+          device: setup.device,
+          dtype: setup.dtype,
+          progress_callback: (progress) => {
+            if (progress.status !== "progress" || !progress.total) return;
+            files.set(progress.file, [progress.loaded, progress.total]);
+            const [loaded, total] = [...files.values()].reduce((sum, file) => [sum[0] + file[0], sum[1] + file[1]], [0, 0]);
+            aiState(`${t("ai.loading")}… ${Math.round((loaded / total) * 100)}%`);
+          },
+        });
+        chat = { generator, TextStreamer };
+      })().catch((error) => {
+        loadingChat = undefined;
+        throw error;
+      });
+      return loadingChat;
+    }
+
+    async function talk(question, found) {
+      const context = found.map(({ item }) => `- ${item.title} (${item.sourceName})`).join("\n");
+      const messages = [
+        {
+          role: "system",
+          content: [
+            "You are the saferoom AI on raimundo.sh.",
+            "About this place: the saferoom is a cozy interplanetary shell stop for space cowboys. Visitors read something interesting, play the radio (SomaFM), pick a virtual chair and relax. Everything, including you, runs inside the visitor's web browser; nothing is sent to a server.",
+            "Answer in at most 3 short sentences, in the same language as the user. If you do not know, say so.",
+            "The headlines below are articles from today's reading list. They are not facts about this place. Mention one only if it answers the question.",
+            `Headlines:\n${context || "- (none)"}`,
+          ].join("\n"),
+        },
+        { role: "user", content: question },
+      ];
+      const node = say("bot", "");
+      const streamer = new chat.TextStreamer(chat.generator.tokenizer, {
+        skip_prompt: true,
+        skip_special_tokens: true,
+        callback_function: (text) => {
+          node.textContent += text;
+          aiLog.scrollTop = aiLog.scrollHeight;
+        },
+      });
+      await chat.generator(messages, { max_new_tokens: 140, do_sample: false, streamer });
+    }
+
+    async function answer(question) {
+      if (aiBusy) return;
+      aiBusy = true;
+      $("ai-form").querySelectorAll("input, button").forEach((node) => (node.disabled = true));
+      say("me", question);
+      try {
+        if (!reads.items.length && !projects.items.length) {
+          say("bot", t("ai.wait"));
+          return;
+        }
+        const found = await nearest(question);
+        if (chatOn) {
+          await loadChat();
+          aiState(`${t("ai.thinking")}…`);
+          await talk(question, found);
+        } else if (!found.length) {
+          say("bot", t("ai.none"));
+        }
+        if (found.length) linksMessage(found);
+        aiState(chatOn ? t("ai.modeChat") : t("ai.mode"));
+      } catch (error) {
+        console.error(error);
+        say("bot", t("ai.error"));
+        aiState("");
+      } finally {
+        aiBusy = false;
+        $("ai-form").querySelectorAll("input, button").forEach((node) => (node.disabled = false));
+        aiInput.focus({ preventScroll: true });
+      }
+    }
+
+    async function paintAi() {
+      aiInput.placeholder = t("ai.ask");
+      const { mb } = await chatSetup();
+      const toggle = $("ai-chat");
+      toggle.setAttribute("aria-pressed", String(chatOn));
+      toggle.textContent = chatOn ? t("ai.talkOn") : `${t("ai.talk")} (~${mb} MB)`;
+      if (!aiBusy) aiState(chatOn ? t("ai.modeChat") : t("ai.mode"));
+    }
+
+    $("ai-chat").addEventListener("click", async () => {
+      chatOn = !chatOn;
+      paintAi();
+      if (!chatOn || chat) return;
+      try {
+        await loadChat();
+        aiState(t("ai.modeChat"));
+      } catch (error) {
+        console.error(error);
+        chatOn = false;
+        paintAi();
+        aiState(t("ai.error"));
+      }
+    });
+
+    $("ai-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const question = aiInput.value.trim().slice(0, 300);
+      if (!question) return;
+      aiInput.value = "";
+      answer(question);
+    });
+
+    document.addEventListener("site-lang", paintAi);
+    paintAi();
+
     // ---------- radio
     // SomaFM: radio sem anuncio, mantida por doacao. O stream sai dos .pls oficiais.
     const STATIONS = [
@@ -1891,9 +2306,14 @@
 
     function paintRadio(now = radioNote) {
       const [, name] = STATIONS[station];
-      $("radio-now").textContent = now ? `${name} · ${now}` : name;
-      $("radio-play").textContent = playing() ? "❚❚" : "▶";
-      $("radio-play").setAttribute("aria-label", playing() ? t("radio.pause") : t("radio.play"));
+      document.querySelectorAll("[data-radio-now]").forEach((node) => {
+        node.textContent = now ? `${name} · ${now}` : name;
+      });
+      document.querySelectorAll("[data-radio-play]").forEach((button) => {
+        button.textContent = playing() ? "❚❚" : "▶";
+        button.setAttribute("aria-label", playing() ? t("radio.pause") : t("radio.play"));
+      });
+      document.body.classList.toggle("is-playing", playing());
     }
 
     async function streamFor(id) {
@@ -1925,7 +2345,9 @@
 
     async function start() {
       radioNote = "";
-      $("radio-now").textContent = `${STATIONS[station][1]} · …`;
+      document.querySelectorAll("[data-radio-now]").forEach((node) => {
+        node.textContent = `${STATIONS[station][1]} · …`;
+      });
       audio.src = await streamFor(STATIONS[station][0]);
       await audio.play();
       nowPlaying();
@@ -1933,7 +2355,7 @@
       nowTimer = setInterval(nowPlaying, 30000);
     }
 
-    $("radio-play").addEventListener("click", async () => {
+    async function togglePlay() {
       if (playing()) {
         audio.pause();
         clearInterval(nowTimer);
@@ -1945,9 +2367,9 @@
       } catch (error) {
         failRadio(error);
       }
-    });
+    }
 
-    $("radio-next").addEventListener("click", async () => {
+    async function nextStation() {
       station = (station + 1) % STATIONS.length;
       try {
         localStorage.setItem("radio-station", String(station));
@@ -1956,7 +2378,10 @@
       }
       if (playing()) await start().catch(failRadio);
       else paintRadio();
-    });
+    }
+
+    document.querySelectorAll("[data-radio-play]").forEach((button) => button.addEventListener("click", togglePlay));
+    document.querySelectorAll("[data-radio-next]").forEach((button) => button.addEventListener("click", nextStation));
 
     // ---------- leitores online
     // Ficou interessado, né? É mais fácil só compartilhar o link com um amigo.
