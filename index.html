@@ -897,8 +897,56 @@
     }
 
     .ai-form :disabled {
-      cursor: not-allowed;
+      cursor: progress;
       opacity: 0.55;
+    }
+
+    .msg p {
+      margin: 0 0 6px;
+    }
+
+    .msg-links {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    .msg-links span {
+      color: var(--faint);
+      font-size: 0.86em;
+    }
+
+    .ai-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 10px;
+      font-size: 0.78em;
+    }
+
+    .ai-chat {
+      padding: 3px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .ai-chat:hover {
+      border-color: var(--glow);
+      color: var(--text);
+    }
+
+    .ai-chat[aria-pressed="true"] {
+      border-color: var(--glow);
+      box-shadow: inset 0 0 12px -4px var(--glow);
+      color: var(--glow);
+    }
+
+    .ai-state {
+      color: var(--faint);
     }
 
     /* ---------- dock: utils, links, radio */
@@ -1143,7 +1191,7 @@
       </section>
     </div>
 
-    <!-- IA da saferoom: estatica, gratis e privada. A logica entra na proxima fatia. -->
+    <!-- IA da saferoom: estatica, gratis e privada. Roda inteira no browser de quem pergunta. -->
     <aside class="ai panel" aria-labelledby="ai-title">
       <h2 class="label" id="ai-title">~/saferoom-ai</h2>
       <p class="ai-lede" data-i18n="ai.lede">IA estática, grátis e privada pra perguntas simples.</p>
@@ -1152,9 +1200,13 @@
         <p class="msg bot" data-i18n="ai.hello">howdy. me pergunta algo curto, tipo "o que tem de novo em segurança?"</p>
       </div>
       <form class="ai-form" id="ai-form">
-        <input id="ai-input" type="text" autocomplete="off" aria-label="Pergunta para a IA" placeholder="em breve…" disabled>
-        <button type="submit" disabled data-i18n="ai.send">enviar</button>
+        <input id="ai-input" type="text" autocomplete="off" aria-label="Pergunta para a IA" placeholder="pergunte algo curto…">
+        <button type="submit" data-i18n="ai.send">enviar</button>
       </form>
+      <div class="ai-tools">
+        <button class="ai-chat" type="button" id="ai-chat" aria-pressed="false">ligar conversa</button>
+        <span class="ai-state" id="ai-state" role="status"></span>
+      </div>
     </aside>
   </main>
 
@@ -1272,7 +1324,18 @@
         "ai.lede": "IA estática, grátis e privada pra perguntas simples.",
         "ai.safe": "(tudo é seguro, tudo roda no seu navegador)",
         "ai.hello": "howdy. me pergunta algo curto, tipo \"o que tem de novo em segurança?\"",
-        "ai.send": "enviar"
+        "ai.send": "enviar",
+        "ai.ask": "pergunte algo curto…",
+        "ai.found": "achei isso perto da sua pergunta:",
+        "ai.none": "não achei nada parecido aqui na saferoom. tenta outras palavras.",
+        "ai.wait": "as leituras ainda estão chegando. tenta de novo em alguns segundos.",
+        "ai.talk": "ligar conversa",
+        "ai.talkOn": "conversa ligada",
+        "ai.loading": "baixando o modelinho que fala",
+        "ai.thinking": "pensando",
+        "ai.mode": "modo busca: responde com links, sem inventar.",
+        "ai.modeChat": "modo conversa: modelinho de 360M, pode errar; confira os links.",
+        "ai.error": "deu ruim aqui no seu browser. tenta de novo."
       },
       en: {
         "tagline": "the curious fool",
@@ -1367,7 +1430,18 @@
         "ai.lede": "static, free and private AI for simple questions.",
         "ai.safe": "(all is safe, all runs in your web browser)",
         "ai.hello": "howdy. ask me something short, like \"what's new in security?\"",
-        "ai.send": "send"
+        "ai.send": "send",
+        "ai.ask": "ask something short…",
+        "ai.found": "found this near your question:",
+        "ai.none": "nothing close to that in the saferoom. try other words.",
+        "ai.wait": "the reads are still arriving. try again in a few seconds.",
+        "ai.talk": "turn on chat",
+        "ai.talkOn": "chat on",
+        "ai.loading": "downloading the talking model",
+        "ai.thinking": "thinking",
+        "ai.mode": "search mode: answers with links, never makes things up.",
+        "ai.modeChat": "chat mode: tiny 360M model, it can be wrong; check the links.",
+        "ai.error": "something failed in your browser. try again."
       }
     };
 
@@ -2008,6 +2082,202 @@
       meta: (item) => `${item.sourceName} · ${projectMark(item)}`,
       seenKey: "projects-seen",
     });
+
+    // ---------- saferoom-ai
+    // Duas marchas, as duas no browser de quem pergunta; nada sai daqui.
+    // 1) busca (padrao): o MiniLM que ja escolhe as leituras acha os itens mais perto da
+    //    pergunta e responde com links. Nao escreve texto, entao nao inventa.
+    // 2) conversa (opcional): SmolLM2-360M-Instruct (Apache-2.0) escreve uma resposta curta
+    //    usando so esses itens como contexto. Modelo pequeno erra; por isso os links vem junto.
+    const CHAT_MODEL = "HuggingFaceTB/SmolLM2-360M-Instruct";
+    const AI_POOLS = [
+      { list: () => reads.items, key: "reads-seen", text: (item) => item.title },
+      { list: () => projects.items, key: "projects-seen", text: (item) => `${item.title}. ${item.desc}` },
+    ];
+    const aiLog = $("ai-log");
+    const aiInput = $("ai-input");
+    const aiState = (text) => {
+      $("ai-state").textContent = text;
+    };
+    let chat;
+    let loadingChat;
+    let chatOn = false;
+    let aiBusy = false;
+
+    function say(who, text) {
+      const node = el("div", `msg ${who}`, text);
+      aiLog.append(node);
+      aiLog.scrollTop = aiLog.scrollHeight;
+      return node;
+    }
+
+    // Mesmo cache de vetores das secoes: o que o botao grande ja leu nao e lido de novo.
+    async function poolVectors({ list, key, text }) {
+      const vectorKey = `vectors:${MODEL}:${key}`;
+      const known = (await store.get(vectorKey)) ?? {};
+      const items = list();
+      const missing = items.filter((item) => !known[item.id]);
+      if (missing.length) {
+        aiState(`${t("reads.reading")}…`);
+        (await vectors(missing.map(text))).forEach((vector, i) => {
+          known[missing[i].id] = vector;
+        });
+        store.set(vectorKey, Object.fromEntries(items.map((item) => [item.id, known[item.id]])));
+      }
+      return items.map((item) => [item, known[item.id]]);
+    }
+
+    async function nearest(question, size = 3) {
+      await loadModel(aiState);
+      const [asked] = await vectors([question]);
+      const ranked = [];
+      for (const pool of AI_POOLS) {
+        for (const [item, vector] of await poolVectors(pool)) {
+          if (vector && safeUrl(item.url)) ranked.push({ item, score: cosine(asked, vector) });
+        }
+      }
+      // Abaixo disso a frase so divide palavras soltas com o titulo: melhor dizer que nao achou.
+      return ranked.sort((a, b) => b.score - a.score).filter(({ score }) => score > 0.3).slice(0, size);
+    }
+
+    function linksMessage(found) {
+      const node = el("div", "msg bot");
+      const list = el("ul", "msg-links");
+      for (const { item } of found) {
+        const row = el("li");
+        const link = el("a", "", item.title);
+        link.href = safeUrl(item.url);
+        link.rel = "noopener";
+        link.target = "_blank";
+        row.append(link, el("span", "", ` · ${item.sourceName}`));
+        list.append(row);
+      }
+      node.append(el("p", "", t("ai.found")), list);
+      aiLog.append(node);
+      aiLog.scrollTop = aiLog.scrollHeight;
+    }
+
+    // WebGPU aguenta o modelo em 4 bits (~273 MB); sem ela, wasm em 8 bits (~365 MB).
+    async function chatSetup() {
+      const adapter = navigator.gpu ? await navigator.gpu.requestAdapter().catch(() => null) : null;
+      return adapter ? { device: "webgpu", dtype: "q4f16", mb: 273 } : { device: "wasm", dtype: "q8", mb: 365 };
+    }
+
+    function loadChat() {
+      loadingChat ??= (async () => {
+        const setup = await chatSetup();
+        const files = new Map();
+        const { pipeline, TextStreamer } = await import(AI_LIB);
+        const generator = await pipeline("text-generation", CHAT_MODEL, {
+          device: setup.device,
+          dtype: setup.dtype,
+          progress_callback: (progress) => {
+            if (progress.status !== "progress" || !progress.total) return;
+            files.set(progress.file, [progress.loaded, progress.total]);
+            const [loaded, total] = [...files.values()].reduce((sum, file) => [sum[0] + file[0], sum[1] + file[1]], [0, 0]);
+            aiState(`${t("ai.loading")}… ${Math.round((loaded / total) * 100)}%`);
+          },
+        });
+        chat = { generator, TextStreamer };
+      })().catch((error) => {
+        loadingChat = undefined;
+        throw error;
+      });
+      return loadingChat;
+    }
+
+    async function talk(question, found) {
+      const context = found.map(({ item }) => `- ${item.title} (${item.sourceName})`).join("\n");
+      const messages = [
+        {
+          role: "system",
+          content: [
+            "You are the saferoom AI on raimundo.sh.",
+            "About this place: the saferoom is a cozy interplanetary shell stop for space cowboys. Visitors read something interesting, play the radio (SomaFM), pick a virtual chair and relax. Everything, including you, runs inside the visitor's web browser; nothing is sent to a server.",
+            "Answer in at most 3 short sentences, in the same language as the user. If you do not know, say so.",
+            "The headlines below are articles from today's reading list. They are not facts about this place. Mention one only if it answers the question.",
+            `Headlines:\n${context || "- (none)"}`,
+          ].join("\n"),
+        },
+        { role: "user", content: question },
+      ];
+      const node = say("bot", "");
+      const streamer = new chat.TextStreamer(chat.generator.tokenizer, {
+        skip_prompt: true,
+        skip_special_tokens: true,
+        callback_function: (text) => {
+          node.textContent += text;
+          aiLog.scrollTop = aiLog.scrollHeight;
+        },
+      });
+      await chat.generator(messages, { max_new_tokens: 140, do_sample: false, streamer });
+    }
+
+    async function answer(question) {
+      if (aiBusy) return;
+      aiBusy = true;
+      $("ai-form").querySelectorAll("input, button").forEach((node) => (node.disabled = true));
+      say("me", question);
+      try {
+        if (!reads.items.length && !projects.items.length) {
+          say("bot", t("ai.wait"));
+          return;
+        }
+        const found = await nearest(question);
+        if (chatOn) {
+          await loadChat();
+          aiState(`${t("ai.thinking")}…`);
+          await talk(question, found);
+        } else if (!found.length) {
+          say("bot", t("ai.none"));
+        }
+        if (found.length) linksMessage(found);
+        aiState(chatOn ? t("ai.modeChat") : t("ai.mode"));
+      } catch (error) {
+        console.error(error);
+        say("bot", t("ai.error"));
+        aiState("");
+      } finally {
+        aiBusy = false;
+        $("ai-form").querySelectorAll("input, button").forEach((node) => (node.disabled = false));
+        aiInput.focus({ preventScroll: true });
+      }
+    }
+
+    async function paintAi() {
+      aiInput.placeholder = t("ai.ask");
+      const { mb } = await chatSetup();
+      const toggle = $("ai-chat");
+      toggle.setAttribute("aria-pressed", String(chatOn));
+      toggle.textContent = chatOn ? t("ai.talkOn") : `${t("ai.talk")} (~${mb} MB)`;
+      if (!aiBusy) aiState(chatOn ? t("ai.modeChat") : t("ai.mode"));
+    }
+
+    $("ai-chat").addEventListener("click", async () => {
+      chatOn = !chatOn;
+      paintAi();
+      if (!chatOn || chat) return;
+      try {
+        await loadChat();
+        aiState(t("ai.modeChat"));
+      } catch (error) {
+        console.error(error);
+        chatOn = false;
+        paintAi();
+        aiState(t("ai.error"));
+      }
+    });
+
+    $("ai-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const question = aiInput.value.trim().slice(0, 300);
+      if (!question) return;
+      aiInput.value = "";
+      answer(question);
+    });
+
+    document.addEventListener("site-lang", paintAi);
+    paintAi();
 
     // ---------- radio
     // SomaFM: radio sem anuncio, mantida por doacao. O stream sai dos .pls oficiais.
